@@ -256,9 +256,7 @@ public class ForzaGuiController {
         progressSuspensionTravelRR.progressProperty().bind(engineer.suspensionTravelNormalizedRR);
 
         labelRpmMax.textProperty().bind(Bindings.format("%5.0f", engineer.rpmMax));
-        //labelRpmMax.styleProperty().bind(Bindings.concat("-fx-font-size: ",horizontalScale.multiply(24).toString(),";"));
         labelRpmCurrent.textProperty().bind(Bindings.format("%5.0f", engineer.rpmCurrent));
-        //labelRpmMax.styleProperty().bind(Bindings.concat("-fx-font-size: ",horizontalScale.multiply(50).toString(),";"));
 
         labelRpmMaxMeasured.textProperty().bind(Bindings.format("%5.0f", engineer.rpmMaxMeasured));
         labelDrivetrainType.textProperty().bind(StringExpression.stringExpression(engineer.drivetrainTypeString));
