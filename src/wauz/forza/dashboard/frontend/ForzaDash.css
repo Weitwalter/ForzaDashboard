@@ -1,0 +1,43 @@
+.root{
+	-fx-background-color: #000000;
+	-fx-font-size: 12px;
+}
+.border-pane{
+	-fx-background-color: #000000;
+}
+.label{
+    -fx-text-fill: #F1F1F1;
+}
+
+.progress-bar{
+	-fx-text-box-border: orange;
+	-fx-control-inner-background: black;
+	-fx-accent:orange;
+}
+
+.accordion{
+	-fx-background-color: #000000;
+}
+.titled-pane{
+	-fx-border-color: #101010;
+	-fx-border-width: 0;
+}
+.titled-pane > .title{
+	-fx-background-color: #101010;
+	-fx-text-fill: #F1F1F1;
+}
+
+.titled-pane:focused > .title 
+{
+	-fx-color: black;
+	-fx-background-color: #555555;
+}
+
+.titled-pane > *.content 
+{
+ -fx-background-color: #101010;
+}
+.button{
+ -fx-background-color: #555555;
+ -fx-text-fill: #F1F1F1;
+}
