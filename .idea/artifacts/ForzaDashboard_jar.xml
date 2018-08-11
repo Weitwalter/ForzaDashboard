@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ForzaDashboard:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ForzaDashboard_jar</output-path>
+    <root id="archive" name="ForzaDashboard.jar">
+      <element id="module-output" name="ForzaDashboard" />
+    </root>
+  </artifact>
+</component>

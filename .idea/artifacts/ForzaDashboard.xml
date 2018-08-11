@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="apk" name="ForzaDashboard">
+    <output-path>$PROJECT_DIR$/out/artifacts/ForzaDashboard</output-path>
+    <properties id="android-properties">
+      <options>
+        <option name="keyStoreUrl" value="file://" />
+      </options>
+    </properties>
+    <root id="archive" name="ForzaDashboard.apk" />
+  </artifact>
+</component>
