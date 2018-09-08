@@ -17,7 +17,7 @@ It also shows other information such as current rpm, speed (kph/mph), calculated
 
 You can name your car (If anyone of you can produce a list of car ordinals (data-out) with corresponding names, I'll gladly import them)
 
-If you figure out a way to loopback the data-out stream, you can also use the "always on top" feature, using the dashboard as an overlay, positioning it over your ingame dashboard (in windowed mode)
+If you figure out a way to loopback the data-out stream, you can also use the "always on top" feature, using the dashboard as an overlay, positioning it over your ingame dashboard (in windowed mode) - alternatively simply use the ForzaRelay also here on GitHub.
 
 Listening Port configurable in .properties file - standard port is 1337.
 
@@ -28,5 +28,5 @@ Maximizing, Resizing, dragging without the windows bar on top cluttering the inf
 
 What it is not:
 The dashboard is just a first draft.
-There are sure to be bugs in it (like the ugly drag-resizing or the hiccups with car names of cars not yet in the config file).
+There are sure to be bugs in it (like the ugly drag-resizing).
 I intend to include all data-out datapoints in an readable fashion (think telemetry display like the overlay in FM itself) at some point.
