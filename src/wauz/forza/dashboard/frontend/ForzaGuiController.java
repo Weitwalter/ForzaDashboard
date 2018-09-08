@@ -4,10 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.DoubleExpression;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -19,10 +16,89 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Inet4Address;
 import java.nio.file.Paths;
 import java.util.Properties;
 
 public class ForzaGuiController {
+    @FXML
+    ProgressBar progressWheelInPuddleDepthFL;
+    @FXML
+    ProgressBar progressWheelInPuddleDepthFR;
+    @FXML
+    ProgressBar progressWheelInPuddleDepthRL;
+    @FXML
+    ProgressBar progressWheelInPuddleDepthRR;
+    @FXML
+    ProgressBar progressSurfaceRumbleFL;
+    @FXML
+    ProgressBar progressSurfaceRumbleFR;
+    @FXML
+    ProgressBar progressSurfaceRumbleRL;
+    @FXML
+    ProgressBar progressSurfaceRumbleRR;
+    @FXML
+    ProgressBar progressWheelOnRumbleStrupFL;
+    @FXML
+    ProgressBar progressWheelOnRumbleStrupFR;
+    @FXML
+    ProgressBar progressWheelOnRumbleStrupRL;
+    @FXML
+    ProgressBar progressWheelOnRumbleStrupRR;
+    @FXML
+    Label labelAddressLocalIP;
+    @FXML
+    Label labelAddressLocalPort;
+    @FXML
+    Label labelTireSlipRatioFL;
+    @FXML
+    Label labelTireSlipAngleFL;
+    @FXML
+    Label labelTireSlipCombinedFL;
+    @FXML
+    Label labelTireSlipRatioFR;
+    @FXML
+    Label labelTireSlipAngleFR;
+    @FXML
+    Label labelTireSlipCombinedFR;
+    @FXML
+    Label labelTireSlipRatioRL;
+    @FXML
+    Label labelTireSlipAngleRL;
+    @FXML
+    Label labelTireSlipCombinedRL;
+    @FXML
+    Label labelTireSlipRatioRR;
+    @FXML
+    Label labelTireSlipAngleRR;
+    @FXML
+    Label labelTireSlipCombinedRR;
+
+    @FXML
+    Label labelSurfaceRumbleFL;
+
+    @FXML
+    Label labelSurfaceRumbleFR;
+
+    @FXML
+    Label labelSurfaceRumbleRL;
+
+    @FXML
+    Label labelSurfaceRumbleRR;
+    @FXML
+    Label labelWheelInPuddleDepthFL;
+    @FXML
+    Label labelWheelInPuddleDepthFR;
+    @FXML
+    Label labelWheelInPuddleDepthRL;
+    @FXML
+    Label labelWheelInPuddleDepthRR;
+    @FXML
+    Label labelRoll;
+    @FXML
+    Label labelPitch;
+    @FXML
+    Label labelYaw;
     @FXML
     Label labelRpmZero;
     @FXML
@@ -173,6 +249,8 @@ public class ForzaGuiController {
     Label labelWheelRpmRR;
     @FXML
     Button buttonAlwaysOnTop;
+    @FXML
+    Button buttonRpmMaxMeasuredReset;
 
     private Properties carConfig;
     private Properties forzaConfig;
@@ -187,6 +265,8 @@ public class ForzaGuiController {
     private DoubleProperty verticalScale = new SimpleDoubleProperty();
     private static final double INITIAL_HSCALE = 1000.0;
     private static final double INITIAL_VSCALE = 500.0;
+    private StringProperty spAddressLocalIP = new SimpleStringProperty();
+    private IntegerProperty ipAddressLocalPort = new SimpleIntegerProperty();
 
 
 
@@ -202,6 +282,8 @@ public class ForzaGuiController {
         alwaysOnTop.setValue(Boolean.FALSE);
         if (forzaConfig != null) {
             alwaysOnTop.setValue(Boolean.parseBoolean(forzaConfig.getProperty("alwaysOnTop")));
+            ipAddressLocalPort.setValue(Integer.parseInt(forzaConfig.getProperty("listeningPort")));
+            engineer.surfaceRumbleMax.setValue(Double.parseDouble(forzaConfig.getProperty("surfaceRumbleMax","3.8")));
         }
 
         //bind config
@@ -229,23 +311,19 @@ public class ForzaGuiController {
         labelShiftIndicatorLeft.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(16),";"));
         labelShiftIndicatorRight.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(16),";"));
 
-
         labelVelocityTrueKph.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(50),";"));
         labelVelocityTrueKphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
         labelVelocityTrueMph.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
         labelVelocityTrueMphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
 
 
-
-
-
         //bind data
         DoubleBinding normalizedRpmCurrent = engineer.rpmCurrent.divide(engineer.rpmMax);
         progressRpmCurrent.progressProperty().bind(normalizedRpmCurrent);
         progressShiftWarning.progressProperty().bind(engineer.shiftWarning);
-        labelShiftIndicator.textProperty().bind(Bindings.format("%3.0f", engineer.shiftWarning.multiply(100)));
-        labelShiftIndicatorLeft.textProperty().bind(Bindings.format("%3.0f", engineer.shiftWarning.multiply(100)));
-        labelShiftIndicatorRight.textProperty().bind(Bindings.format("%3.0f", engineer.shiftWarning.multiply(100)));
+        labelShiftIndicator.textProperty().bind(Bindings.format("%3.0f", engineer.shiftWarning.subtract(1).multiply(-100)));
+        labelShiftIndicatorLeft.textProperty().bind(Bindings.format("%5.0f", engineer.rpmMaxMeasured.multiply(engineer.shiftWarningThresholdLow.divide(100))));
+        labelShiftIndicatorRight.textProperty().bind(Bindings.format("%5.0f", engineer.rpmMaxMeasured.multiply(engineer.shiftWarningThresholdHigh.divide(100))));
 
 
         progressAccelerationCurrent.progressProperty().bind(engineer.normalizedAccelerationTrue);
@@ -266,24 +344,28 @@ public class ForzaGuiController {
         labelNumOfCylinders.textProperty().bind(StringExpression.stringExpression(engineer.numOfCylinders));
         labelTimestamp.textProperty().bind(Bindings.format("%.3f", DoubleExpression.doubleExpression(engineer.timestamp).divide(1000)).concat("s"));
 
-        labelVelocityX.textProperty().bind(Bindings.format("%5.5f", engineer.velocityX));
-        labelVelocityY.textProperty().bind(Bindings.format("%5.5f", engineer.velocityY));
-        labelVelocityZ.textProperty().bind(Bindings.format("%5.5f", engineer.velocityZ));
-        labelVelocityTrueNormalized.textProperty().bind(Bindings.format("%5.5f", engineer.velocityTrue));
+        labelVelocityX.textProperty().bind(Bindings.format("%5.2f", engineer.velocityX));
+        labelVelocityY.textProperty().bind(Bindings.format("%5.2f", engineer.velocityY));
+        labelVelocityZ.textProperty().bind(Bindings.format("%5.2f", engineer.velocityZ));
+        labelVelocityTrueNormalized.textProperty().bind(Bindings.format("%5.2f", engineer.velocityTrue));
         labelVelocityTrueKph.textProperty().bind(Bindings.format("%5.0f", engineer.velocityTrueKph));
         labelVelocityTrueMph.textProperty().bind(Bindings.format("%5.0f", engineer.velocityTrueMph));
 
-        labelAngularVelocityX.textProperty().bind(Bindings.format("%5.5f", engineer.angularVelocityX));
-        labelAngularVelocityY.textProperty().bind(Bindings.format("%5.5f", engineer.angularVelocityY));
-        labelAngularVelocityZ.textProperty().bind(Bindings.format("%5.5f", engineer.angularVelocityZ));
+        labelAngularVelocityX.textProperty().bind(Bindings.format("%5.2f", engineer.angularVelocityX));
+        labelAngularVelocityY.textProperty().bind(Bindings.format("%5.2f", engineer.angularVelocityY));
+        labelAngularVelocityZ.textProperty().bind(Bindings.format("%5.2f", engineer.angularVelocityZ));
         labelAngularVelocityTrueNormalized.textProperty().bind(Bindings.format("%5.5f", engineer.angularVelocityTrue));
 
         labelAccelerationCurrent.textProperty().bind(Bindings.format("%5.1f", engineer.accelerationZ));
-        labelAccelerationX.textProperty().bind(Bindings.format("%5.5f", engineer.accelerationX));
-        labelAccelerationY.textProperty().bind(Bindings.format("%5.5f", engineer.accelerationY));
-        labelAccelerationZ.textProperty().bind(Bindings.format("%5.5f", engineer.accelerationZ));
+        labelAccelerationX.textProperty().bind(Bindings.format("%5.2f", engineer.accelerationX));
+        labelAccelerationY.textProperty().bind(Bindings.format("%5.2f", engineer.accelerationY));
+        labelAccelerationZ.textProperty().bind(Bindings.format("%5.2f", engineer.accelerationZ));
         labelAccelerationMax.textProperty().bind(Bindings.format("%3.0f", engineer.accelerationMaxMeasured));
         labelDecelerationMax.textProperty().bind(Bindings.format("%3.0f", engineer.decelerationMaxMeasured));
+
+        labelYaw.textProperty().bind(Bindings.format("%5.2f",engineer.movementYaw));
+        labelPitch.textProperty().bind(Bindings.format("%5.2f",engineer.movementPitch));
+        labelRoll.textProperty().bind(Bindings.format("%5.2f",engineer.movementRoll));
 
         labelSuspensionTravelFL.textProperty().bind(Bindings.format("%5.1f", engineer.suspensionTravelMetersFL.multiply(100)).concat("cm"));
         labelSuspensionTravelFR.textProperty().bind(Bindings.format("%5.1f", engineer.suspensionTravelMetersFR.multiply(100)).concat("cm"));
@@ -295,17 +377,72 @@ public class ForzaGuiController {
         labelWheelRpmRL.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRotationSpeedRL.multiply(9.5493)));
         labelWheelRpmRR.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRotationSpeedRR.multiply(9.5493)));
 
-        labelWheelRpmDiffFrontAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffFrontAbsolute));
+        labelWheelRpmDiffFrontAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffFrontAbsolute).concat("/"));
         labelWheelRpmDiffFrontPerc.textProperty().bind(Bindings.format("%5.1f", engineer.wheelRpmDiffFrontPercentage).concat("%"));
-        labelWheelRpmDiffRearAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffRearAbsolute));
+        labelWheelRpmDiffRearAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffRearAbsolute).concat("/"));
         labelWheelRpmDiffRearPerc.textProperty().bind(Bindings.format("%5.1f", engineer.wheelRpmDiffRearPercentage).concat("%"));
-        labelWheelRpmDiffLeftAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffLeftAbsolute));
+        labelWheelRpmDiffLeftAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffLeftAbsolute).concat("/"));
         labelWheelRpmDiffLeftPerc.textProperty().bind(Bindings.format("%5.1f", engineer.wheelRpmDiffLeftPercentage).concat("%"));
-        labelWheelRpmDiffRightAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffRightAbsolute));
+        labelWheelRpmDiffRightAbs.textProperty().bind(Bindings.format("%5.0f", engineer.wheelRpmDiffRightAbsolute).concat("/"));
+
         labelWheelRpmDiffRightPerc.textProperty().bind(Bindings.format("%5.1f", engineer.wheelRpmDiffRightPercentage).concat("%"));
+
+
+        labelTireSlipRatioFL.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipRatioNormalizedFL).concat("(R)"));
+        labelTireSlipAngleFL.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipAngleNormalizedFL).concat("(A)"));
+        labelTireSlipCombinedFL.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipCombinedNormalizedFL).concat("(C)"));
+
+        labelTireSlipRatioFR.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipRatioNormalizedFR).concat("(R)"));
+        labelTireSlipAngleFR.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipAngleNormalizedFR).concat("(A)"));
+        labelTireSlipCombinedFR.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipCombinedNormalizedFR).concat("(C)"));
+
+        labelTireSlipRatioRL.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipRatioNormalizedRL).concat("(R)"));
+        labelTireSlipAngleRL.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipAngleNormalizedRL).concat("(A)"));
+        labelTireSlipCombinedRL.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipCombinedNormalizedRL).concat("(C)"));
+
+        labelTireSlipRatioRR.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipRatioNormalizedRR).concat("(R)"));
+        labelTireSlipAngleRR.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipAngleNormalizedRR).concat("(A)"));
+        labelTireSlipCombinedRR.textProperty().bind(Bindings.format("%5.2f", engineer.tireSlipCombinedNormalizedRR).concat("(C)"));
+
+        progressWheelOnRumbleStrupFL.progressProperty().bind(engineer.wheelOnRumbleStripFL);
+        progressWheelOnRumbleStrupFR.progressProperty().bind(engineer.wheelOnRumbleStripFR);
+        progressWheelOnRumbleStrupRL.progressProperty().bind(engineer.wheelOnRumbleStripRL);
+        progressWheelOnRumbleStrupRR.progressProperty().bind(engineer.wheelOnRumbleStripRR);
+
+        progressSurfaceRumbleFL.progressProperty().bind(engineer.surfaceRumbleFL.divide(engineer.surfaceRumbleMax.getValue()));
+        progressSurfaceRumbleFR.progressProperty().bind(engineer.surfaceRumbleFR.divide(engineer.surfaceRumbleMax.getValue()));
+        progressSurfaceRumbleRL.progressProperty().bind(engineer.surfaceRumbleRL.divide(engineer.surfaceRumbleMax.getValue()));
+        progressSurfaceRumbleRR.progressProperty().bind(engineer.surfaceRumbleRR.divide(engineer.surfaceRumbleMax.getValue()));
+
+
+        labelSurfaceRumbleFL.textProperty().bind(Bindings.format("%5.0f", engineer.surfaceRumbleFL.divide(engineer.surfaceRumbleMax.getValue()).multiply(100)).concat("%"));
+        labelSurfaceRumbleFR.textProperty().bind(Bindings.format("%5.0f", engineer.surfaceRumbleFR.divide(engineer.surfaceRumbleMax.getValue()).multiply(100)).concat("%"));
+        labelSurfaceRumbleRL.textProperty().bind(Bindings.format("%5.0f", engineer.surfaceRumbleRL.divide(engineer.surfaceRumbleMax.getValue()).multiply(100)).concat("%"));
+        labelSurfaceRumbleRR.textProperty().bind(Bindings.format("%5.0f", engineer.surfaceRumbleRR.divide(engineer.surfaceRumbleMax.getValue()).multiply(100)).concat("%"));
+
+
+        labelWheelInPuddleDepthFL.textProperty().bind(Bindings.format("%5.0f", engineer.wheelInPuddleDepthFL.multiply(100)).concat("%"));
+        labelWheelInPuddleDepthFR.textProperty().bind(Bindings.format("%5.0f", engineer.wheelInPuddleDepthFR.multiply(100)).concat("%"));
+        labelWheelInPuddleDepthRL.textProperty().bind(Bindings.format("%5.0f", engineer.wheelInPuddleDepthRL.multiply(100)).concat("%"));
+        labelWheelInPuddleDepthRR.textProperty().bind(Bindings.format("%5.0f", engineer.wheelInPuddleDepthRR.multiply(100)).concat("%"));
+
+        progressWheelInPuddleDepthFL.progressProperty().bind(engineer.wheelInPuddleDepthFL);
+        progressWheelInPuddleDepthFR.progressProperty().bind(engineer.wheelInPuddleDepthFR);
+        progressWheelInPuddleDepthRL.progressProperty().bind(engineer.wheelInPuddleDepthRL);
+        progressWheelInPuddleDepthRR.progressProperty().bind(engineer.wheelInPuddleDepthRR);
+
 
         labelCarDescription.textProperty().bind(StringExpression.stringExpression(engineer.carDescription));
         labelAlwaysOnTop.textProperty().bind(alwaysOnTop.asString());
+
+        labelAddressLocalIP.textProperty().bind(spAddressLocalIP);
+        labelAddressLocalPort.textProperty().bind(ipAddressLocalPort.asString());
+        try {
+            spAddressLocalIP.setValue(Inet4Address.getLocalHost().getHostAddress());
+        } catch (Exception e){
+            System.out.println("Error reading local IP: "+e.toString());
+        }
+
 
         borderPaneRoot.setOnMousePressed(event -> {
             windowOffsetX = event.getSceneX();
@@ -363,6 +500,12 @@ public class ForzaGuiController {
             }
         });
 
+        buttonSetCarDescription.setOnAction(event -> {
+            if (engineer.carDescription.getValue() == null) engineer.carDescription.setValue("unknown car");
+            int result = saveCarSettings();
+            System.out.println("Saving Car: " + engineer.carDescription.getValue() + " / " + engineer.carOrdinal.getValue().toString() + " / " + Integer.toString(result));
+        });
+
 
         //Save Car Settings to File
         engineer.isRaceOn.addListener((observable, oldValue, newValue) -> {
@@ -376,8 +519,12 @@ public class ForzaGuiController {
 
         //read Car Settings from File
         engineer.carOrdinal.addListener((observable, oldValue, newValue) -> {
+            engineer.carDescription.setValue("unknown car");
             int result = loadCarSettings();
             System.out.println("Loaded Car: " + engineer.carDescription.getValue() + "/" + Integer.toString(result));
+        });
+        buttonRpmMaxMeasuredReset.setOnAction(event -> {
+            engineer.rpmMaxMeasured.setValue(1);
         });
 
     }

@@ -137,6 +137,8 @@ public class DataEngineer {
 
     public final StringProperty carDescription = new SimpleStringProperty();
 
+    public final DoubleProperty surfaceRumbleMax = new SimpleDoubleProperty();
+
 
     //public final DoubleProperty calculatedProperty = new SimpleDoubleProperty();
     //add listener to carOrdinal to reset this
@@ -159,6 +161,28 @@ public class DataEngineer {
                 shiftWarningThresholdHigh.setValue(shiftWarningThresholdLow.getValue()+1);
             }
         });
+        surfaceRumbleFL.addListener((observable, oldValue, newValue) -> {
+            if (surfaceRumbleFL.getValue()>surfaceRumbleMax.getValue()){
+                surfaceRumbleMax.setValue(newValue);
+            }
+        });
+        surfaceRumbleFR.addListener((observable, oldValue, newValue) -> {
+            if (surfaceRumbleFR.getValue()>surfaceRumbleMax.getValue()){
+                surfaceRumbleMax.setValue(newValue);
+            }
+        });
+        surfaceRumbleRL.addListener((observable, oldValue, newValue) -> {
+            if (surfaceRumbleRL.getValue()>surfaceRumbleMax.getValue()){
+                surfaceRumbleMax.setValue(newValue);
+            }
+        });
+        surfaceRumbleRR.addListener((observable, oldValue, newValue) -> {
+            if (surfaceRumbleRR.getValue()>surfaceRumbleMax.getValue()){
+                surfaceRumbleMax.setValue(newValue);
+            }
+        });
+
+
     }
 
     public static DataEngineer getInstance() {
