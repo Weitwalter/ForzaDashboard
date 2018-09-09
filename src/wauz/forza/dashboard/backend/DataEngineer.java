@@ -140,6 +140,30 @@ public class DataEngineer {
     public final DoubleProperty surfaceRumbleMax = new SimpleDoubleProperty();
 
 
+
+    // Tire normalized slip ratio, = 0 means 100% grip and |ratio| > 1.0 means loss of grip.
+    public final DoubleProperty tireSlipRatioAbsoluteFL = new SimpleDoubleProperty();
+    public final DoubleProperty tireSlipRatioAbsoluteFR = new SimpleDoubleProperty();
+    public final DoubleProperty tireSlipRatioAbsoluteRL = new SimpleDoubleProperty();
+    public final DoubleProperty tireSlipRatioAbsoluteRR = new SimpleDoubleProperty();
+
+    public final IntegerProperty tireSlipRatioIndicatedFL = new SimpleIntegerProperty();
+    public final IntegerProperty tireSlipRatioIndicatedFR = new SimpleIntegerProperty();
+    public final IntegerProperty tireSlipRatioIndicatedRL = new SimpleIntegerProperty();
+    public final IntegerProperty tireSlipRatioIndicatedRR = new SimpleIntegerProperty();
+
+    // Tire normalized slip angle, = 0 means 100% grip and |ratio| > 1.0 means loss of grip.
+    public final DoubleProperty tireSlipAngleAbsoluteFL = new SimpleDoubleProperty();
+    public final DoubleProperty tireSlipAngleAbsoluteFR = new SimpleDoubleProperty();
+    public final DoubleProperty tireSlipAngleAbsoluteRL = new SimpleDoubleProperty();
+    public final DoubleProperty tireSlipAngleAbsoluteRR = new SimpleDoubleProperty();
+
+    public final IntegerProperty tireSlipAngleIndicatedFL = new SimpleIntegerProperty();
+    public final IntegerProperty tireSlipAngleIndicatedFR = new SimpleIntegerProperty();
+    public final IntegerProperty tireSlipAngleIndicatedRL = new SimpleIntegerProperty();
+    public final IntegerProperty tireSlipAngleIndicatedRR = new SimpleIntegerProperty();
+
+
     //public final DoubleProperty calculatedProperty = new SimpleDoubleProperty();
     //add listener to carOrdinal to reset this
     //add listener to rpmCurrent to update this (if greater than prev)
@@ -181,6 +205,54 @@ public class DataEngineer {
                 surfaceRumbleMax.setValue(newValue);
             }
         });
+        tireSlipRatioNormalizedFL.addListener((observable -> {
+            if (Math.abs(tireSlipRatioNormalizedFL.getValue())>=1.0){
+                tireSlipRatioIndicatedFL.setValue(1);
+            } else tireSlipRatioIndicatedFL.setValue(0);
+            tireSlipRatioAbsoluteFL.setValue(Math.abs(tireSlipRatioNormalizedFL.getValue()));
+        }));
+        tireSlipRatioNormalizedFR.addListener((observable -> {
+            if (Math.abs(tireSlipRatioNormalizedFR.getValue())>=1.0){
+                tireSlipRatioIndicatedFR.setValue(1);
+            } else tireSlipRatioIndicatedFR.setValue(0);
+            tireSlipRatioAbsoluteFR.setValue(Math.abs(tireSlipRatioNormalizedFR.getValue()));
+        }));
+        tireSlipRatioNormalizedRL.addListener((observable -> {
+            if (Math.abs(tireSlipRatioNormalizedRL.getValue())>=1.0){
+                tireSlipRatioIndicatedRL.setValue(1);
+            } else tireSlipRatioIndicatedRL.setValue(0);
+            tireSlipRatioAbsoluteRL.setValue(Math.abs(tireSlipRatioNormalizedRL.getValue()));
+        }));
+        tireSlipRatioNormalizedRR.addListener((observable -> {
+            if (Math.abs(tireSlipRatioNormalizedRR.getValue())>=1.0){
+                tireSlipRatioIndicatedRR.setValue(1);
+            } else tireSlipRatioIndicatedRR.setValue(0);
+            tireSlipRatioAbsoluteRR.setValue(Math.abs(tireSlipRatioNormalizedRR.getValue()));
+        }));
+        tireSlipAngleNormalizedFL.addListener((observable -> {
+            if (Math.abs(tireSlipAngleNormalizedFL.getValue())>=1.0){
+                tireSlipAngleIndicatedFL.setValue(1);
+            } else tireSlipAngleIndicatedFL.setValue(0);
+            tireSlipAngleAbsoluteFL.setValue(Math.abs(tireSlipAngleNormalizedFL.getValue()));
+        }));
+        tireSlipAngleNormalizedRL.addListener((observable -> {
+            if (Math.abs(tireSlipAngleNormalizedRL.getValue())>=1.0){
+                tireSlipAngleIndicatedRL.setValue(1);
+            } else tireSlipAngleIndicatedRL.setValue(0);
+            tireSlipAngleAbsoluteRL.setValue(Math.abs(tireSlipAngleNormalizedRL.getValue()));
+        }));
+        tireSlipAngleNormalizedFR.addListener((observable -> {
+            if (Math.abs(tireSlipAngleNormalizedFR.getValue())>=1.0){
+                tireSlipAngleIndicatedFR.setValue(1);
+            } else tireSlipAngleIndicatedFR.setValue(0);
+            tireSlipAngleAbsoluteFR.setValue(Math.abs(tireSlipAngleNormalizedFR.getValue()));
+        }));
+        tireSlipAngleNormalizedRR.addListener((observable -> {
+            if (Math.abs(tireSlipAngleNormalizedRR.getValue())>=1.0){
+                tireSlipAngleIndicatedRR.setValue(1);
+            } else tireSlipAngleIndicatedRR.setValue(0);
+            tireSlipAngleAbsoluteRR.setValue(Math.abs(tireSlipAngleNormalizedRR.getValue()));
+        }));
 
 
     }
