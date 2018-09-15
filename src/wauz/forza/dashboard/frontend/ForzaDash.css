@@ -15,28 +15,34 @@
 	-fx-accent:orange;
 }
 
-.accordion{
+.tab-pane{
 	-fx-background-color: #000000;
 }
-.titled-pane{
+
+.tab-pane *.tab-header-background
+{
+	-fx-background-color: #101010;
+}
+
+.tab-pane .tab{
+	-fx-background-color: #101010;
+}
+
+.tab{
 	-fx-border-color: #101010;
 	-fx-border-width: 0;
 }
-.titled-pane > .title{
-	-fx-background-color: #101010;
+.tab  .tab-label{
 	-fx-text-fill: #F1F1F1;
 }
 
-.titled-pane:focused > .title 
+.tab-pane .tab:selected
 {
-	-fx-color: black;
-	-fx-background-color: #555555;
+	-fx-color: #555555;
+	-fx-background-color: #000000;
 }
 
-.titled-pane > *.content 
-{
- -fx-background-color: #101010;
-}
+
 .button{
  -fx-background-color: #555555;
  -fx-text-fill: #F1F1F1;

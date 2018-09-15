@@ -5,7 +5,7 @@ import javafx.beans.property.*;
 public class DataEngineer {
     private static DataEngineer instance;
 
-    //Basic FM7 data out Values
+    //Basic FM7 data out Values (V1 / SLED)
 
     // 1 or 0 = in Menus. Race starts when you get control of the car
     public final IntegerProperty isRaceOn = new SimpleIntegerProperty();
@@ -102,6 +102,57 @@ public class DataEngineer {
     public final DoubleProperty wheelInPuddleDepthRR = new SimpleDoubleProperty();
 
 
+    //V2 Outputs (Dash)
+    // Position in meters
+    public final DoubleProperty carPositionX = new SimpleDoubleProperty();
+    public final DoubleProperty carPositionY = new SimpleDoubleProperty();
+    public final DoubleProperty carPositionZ = new SimpleDoubleProperty();
+
+    // in m/s
+    public final DoubleProperty carSpeed = new SimpleDoubleProperty();
+    //in watts
+    public final DoubleProperty carPower = new SimpleDoubleProperty();
+    // in newton meter
+    public final DoubleProperty carTorque = new SimpleDoubleProperty();
+
+    // tire temps (in C/F??)
+    public final DoubleProperty tireTempFL = new SimpleDoubleProperty();
+    public final DoubleProperty tireTempFR = new SimpleDoubleProperty();
+    public final DoubleProperty tireTempRL = new SimpleDoubleProperty();
+    public final DoubleProperty tireTempRR = new SimpleDoubleProperty();
+
+    // psi/bar/normalized?
+    public final DoubleProperty carBoost = new SimpleDoubleProperty();
+    // litres/normalized?
+    public final DoubleProperty raceFuel = new SimpleDoubleProperty();
+    // meters?
+    public final DoubleProperty raceDistanceTravelled = new SimpleDoubleProperty();
+    // ms/lap number?
+    public final DoubleProperty raceBestLap = new SimpleDoubleProperty();
+    // ms/lap number?
+    public final DoubleProperty raceLastLap = new SimpleDoubleProperty();
+    // ms?
+    public final DoubleProperty raceCurrentLap = new SimpleDoubleProperty();
+    // ms?
+    public final DoubleProperty raceCurrentRaceTime = new SimpleDoubleProperty();
+    public final IntegerProperty raceLapNumber = new SimpleIntegerProperty();
+    public final IntegerProperty racePosition = new SimpleIntegerProperty();
+
+    //button pressed or values?
+    public final IntegerProperty carAccel = new SimpleIntegerProperty();
+    public final IntegerProperty carBrake = new SimpleIntegerProperty();
+    public final IntegerProperty carClutch = new SimpleIntegerProperty();
+    public final IntegerProperty carHandBrake = new SimpleIntegerProperty();
+    //current gear or # gears?
+    public final IntegerProperty carGear = new SimpleIntegerProperty();
+    // what??
+    public final IntegerProperty carSteer = new SimpleIntegerProperty();
+    // what??
+    public final IntegerProperty raceNormalizedDrivingLine = new SimpleIntegerProperty();
+    // what??
+    public final IntegerProperty raceNormalizedAIBrakeDifference = new SimpleIntegerProperty();
+
+
     //Calculated Values to enrich display possibilities
     // this is reset to 0 each time your carOrdinal (=car) changes.
     public final DoubleProperty rpmMaxMeasured = new SimpleDoubleProperty();
@@ -164,16 +215,10 @@ public class DataEngineer {
     public final IntegerProperty tireSlipAngleIndicatedRR = new SimpleIntegerProperty();
 
 
-    //public final DoubleProperty calculatedProperty = new SimpleDoubleProperty();
-    //add listener to carOrdinal to reset this
-    //add listener to rpmCurrent to update this (if greater than prev)
+
 
     private DataEngineer() {
-        //calculatedProperty.bind(rpmCurrent.divide(rpmMax));
         isRaceOn.addListener((observable, oldValue, newValue) -> System.out.println("isRaceOn:" + newValue));
-        //timestamp.addListener((observable, oldValue, newValue) -> System.out.println("timestamp:" + newValue));
-        //rpmMax.addListener((observable, oldValue, newValue) -> System.out.println("rpmMax:" + newValue));
-        //rpmCurrent.addListener((observable, oldValue, newValue) -> System.out.println("rpmCurrent:" + newValue));
         carOrdinal.addListener((observable, oldValue, newValue) -> {
             this.rpmMaxMeasured.setValue(0);
             this.accelerationMaxMeasured.setValue(10);

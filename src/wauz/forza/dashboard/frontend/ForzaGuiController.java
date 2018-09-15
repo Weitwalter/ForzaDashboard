@@ -1,5 +1,6 @@
 package wauz.forza.dashboard.frontend;
 
+import com.sun.javafx.binding.StringFormatter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.DoubleExpression;
@@ -22,6 +23,24 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 public class ForzaGuiController {
+    @FXML
+    ProgressBar progressRaceNormalizedDrivingLine;
+    @FXML
+    ProgressBar progressRaceNormalizedAIBrakeDifference;
+    @FXML
+    ProgressBar progressCarAccel;
+    @FXML
+    ProgressBar progressCarBrake;
+    @FXML
+    ProgressBar progressCarClutch;
+    @FXML
+    ProgressBar progressCarHandbrake;
+    @FXML
+    ProgressBar progressCarSteer;
+    @FXML
+    ProgressBar progressRaceFuel;
+    @FXML
+    Slider sliderTemperatureUnits;
     @FXML
     ProgressBar progressTireSlipAngleIndicatedFL;
     @FXML
@@ -47,7 +66,7 @@ public class ForzaGuiController {
     @FXML
     ProgressBar progressTireSlipIndicatedRL;
     @FXML
-    Accordion acDetailInfo;
+    TabPane tpDetailInfo;
     @FXML
     ProgressBar progressTireSlipRatioFL;
     @FXML
@@ -287,6 +306,68 @@ public class ForzaGuiController {
     @FXML
     Button buttonRpmMaxMeasuredReset;
 
+    //v2 (Dash) stuff:
+    @FXML
+    Label labelCarPositionX;
+    @FXML
+    Label labelCarPositionY;
+    @FXML
+    Label labelCarPositionZ;
+    @FXML
+    Label labelCarSpeed;
+    @FXML
+    Label labelCarPower;
+    @FXML
+    Label labelCarTorque;
+    @FXML
+    Label labelTireTempFL;
+    @FXML
+    Label labelTireTempFR;
+    @FXML
+    Label labelTireTempRL;
+    @FXML
+    Label labelTireTempRR;
+
+    @FXML
+    Label labelCarBoost;
+    @FXML
+    Label labelRaceFuel;
+    @FXML
+    Label labelRaceDistanceTravelled;
+    @FXML
+    Label labelRaceBestLap;
+    @FXML
+    Label labelRaceLastLap;
+    @FXML
+    Label labelRaceCurrentLap;
+    @FXML
+    Label labelRaceCurrentRaceTime;
+
+    @FXML
+    Label labelRaceLapNumber;
+    @FXML
+    Label labelRacePosition;
+
+    @FXML
+    Label labelCarAccel;
+    @FXML
+    Label labelCarBrake;
+    @FXML
+    Label labelCarClutch;
+    @FXML
+    Label labelCarHandbrake;
+    @FXML
+    Label labelCarGear;
+    @FXML
+    Label labelCarGearLabel;
+    @FXML
+    Label labelCarSteer;
+
+    @FXML
+    Label labelRaceNormalizedDrivingLine;
+    @FXML
+    Label labelRaceNormalizedAIBrakeDifference;
+
     private Properties carConfig;
     private Properties forzaConfig;
     private DataEngineer engineer;
@@ -304,7 +385,7 @@ public class ForzaGuiController {
     private IntegerProperty ipAddressLocalPort = new SimpleIntegerProperty();
     private double scaledFontSize;
     private static final double INITIAL_FONTSIZE = 12;
-
+    private IntegerProperty temperatureUnits = new SimpleIntegerProperty();
 
 
     public ForzaGuiController() {
@@ -313,15 +394,17 @@ public class ForzaGuiController {
 
     @FXML
     public void initialize() {
+
         //bind looks
-        scaledFontSize=INITIAL_FONTSIZE;
+        scaledFontSize = INITIAL_FONTSIZE;
         carConfig = new Properties();
         forzaConfig = loadConfiguration(new Properties());
         alwaysOnTop.setValue(Boolean.FALSE);
         if (forzaConfig != null) {
             alwaysOnTop.setValue(Boolean.parseBoolean(forzaConfig.getProperty("alwaysOnTop")));
             ipAddressLocalPort.setValue(Integer.parseInt(forzaConfig.getProperty("listeningPort")));
-            engineer.surfaceRumbleMax.setValue(Double.parseDouble(forzaConfig.getProperty("surfaceRumbleMax","3.8")));
+            engineer.surfaceRumbleMax.setValue(Double.parseDouble(forzaConfig.getProperty("surfaceRumbleMax", "3.8")));
+            temperatureUnits.setValue(Integer.parseInt(forzaConfig.getProperty("temperatureUnits", "0")));
         }
 
         //bind config
@@ -337,23 +420,26 @@ public class ForzaGuiController {
         engineer.carDescription.bindBidirectional(textCarDescription.textProperty());
 
         //bind main information display scaling
-        progressRpmCurrent.prefWidthProperty().bind(borderPaneRoot.widthProperty().multiply(0.6));
+        progressRpmCurrent.prefWidthProperty().bind(borderPaneRoot.widthProperty().multiply(0.45));
         progressRpmCurrent.prefHeightProperty().bind(borderPaneRoot.heightProperty().multiply(0.1));
-        labelRpmCurrent.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(35),";"));
-        labelRpmZero.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
-        labelRpmMax.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
+        labelRpmCurrent.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(35), ";"));
+        labelRpmZero.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
+        labelRpmMax.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
 
         progressShiftWarning.prefHeightProperty().bind(borderPaneRoot.heightProperty().multiply(0.06));
         progressShiftWarning.prefWidthProperty().bind(borderPaneRoot.widthProperty().multiply(0.7));
-        labelShiftIndicator.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(16),";"));
-        labelShiftIndicatorLeft.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(16),";"));
-        labelShiftIndicatorRight.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(16),";"));
+        labelShiftIndicator.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(16), ";"));
+        labelShiftIndicatorLeft.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(16), ";"));
+        labelShiftIndicatorRight.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(16), ";"));
 
-        labelVelocityTrueKph.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(50),";"));
-        labelVelocityTrueKphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
-        labelVelocityTrueMph.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
-        labelVelocityTrueMphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ",verticalScale.multiply(24),";"));
-        rescale();
+        labelVelocityTrueKph.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(50), ";"));
+        labelVelocityTrueKphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
+        labelVelocityTrueMph.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
+        labelVelocityTrueMphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
+
+        labelCarGear.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(72), ";"));
+        labelCarGearLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
+
 
         //bind data
         DoubleBinding normalizedRpmCurrent = engineer.rpmCurrent.divide(engineer.rpmMax);
@@ -401,9 +487,9 @@ public class ForzaGuiController {
         labelAccelerationMax.textProperty().bind(Bindings.format("%3.0f", engineer.accelerationMaxMeasured));
         labelDecelerationMax.textProperty().bind(Bindings.format("%3.0f", engineer.decelerationMaxMeasured));
 
-        labelYaw.textProperty().bind(Bindings.format("%5.2f",engineer.movementYaw.multiply(57.2958)).concat("°"));
-        labelPitch.textProperty().bind(Bindings.format("%5.2f",engineer.movementPitch.multiply(57.2958)).concat("°"));
-        labelRoll.textProperty().bind(Bindings.format("%5.2f",engineer.movementRoll.multiply(57.2958)).concat("°"));
+        labelYaw.textProperty().bind(Bindings.format("%5.2f", engineer.movementYaw.multiply(57.2958)).concat("°"));
+        labelPitch.textProperty().bind(Bindings.format("%5.2f", engineer.movementPitch.multiply(57.2958)).concat("°"));
+        labelRoll.textProperty().bind(Bindings.format("%5.2f", engineer.movementRoll.multiply(57.2958)).concat("°"));
 
         labelSuspensionTravelFL.textProperty().bind(Bindings.format("%5.1f", engineer.suspensionTravelMetersFL.multiply(100)).concat("cm"));
         labelSuspensionTravelFR.textProperty().bind(Bindings.format("%5.1f", engineer.suspensionTravelMetersFR.multiply(100)).concat("cm"));
@@ -492,10 +578,90 @@ public class ForzaGuiController {
 
         labelAddressLocalIP.textProperty().bind(spAddressLocalIP);
         labelAddressLocalPort.textProperty().bind(ipAddressLocalPort.asString());
+
+        labelCarGear.textProperty().bind(StringExpression.stringExpression(engineer.carGear));
+
+        sliderTemperatureUnits.valueProperty().bindBidirectional(temperatureUnits);
+        sliderTemperatureUnits.setBlockIncrement(1.0);
+        sliderTemperatureUnits.setMinorTickCount(0);
+        sliderTemperatureUnits.setMajorTickUnit(1.0);
+        sliderTemperatureUnits.setSnapToTicks(true);
+
+        if (temperatureUnits.getValue() == 0) {
+            labelTireTempFL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFL.subtract(32).divide(1.8)).concat("°C"));
+            labelTireTempFR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFR.subtract(32).divide(1.8)).concat("°C"));
+            labelTireTempRL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRL.subtract(32).divide(1.8)).concat("°C"));
+            labelTireTempRR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRR.subtract(32).divide(1.8)).concat("°C"));
+        } else if (temperatureUnits.getValue() == 1) {
+            labelTireTempFL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFL).concat("°F"));
+            labelTireTempFR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFR).concat("°F"));
+            labelTireTempRL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRL).concat("°F"));
+            labelTireTempRR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRR).concat("°F"));
+        }
+
+
+        temperatureUnits.addListener((observable, oldValue, newValue) -> {
+            if (temperatureUnits.getValue() == 0) {
+                labelTireTempFL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFL.subtract(32).divide(1.8)).concat("°C"));
+                labelTireTempFR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFR.subtract(32).divide(1.8)).concat("°C"));
+                labelTireTempRL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRL.subtract(32).divide(1.8)).concat("°C"));
+                labelTireTempRR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRR.subtract(32).divide(1.8)).concat("°C"));
+            } else {
+                labelTireTempFL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFL).concat("°F"));
+                labelTireTempFR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempFR).concat("°F"));
+                labelTireTempRL.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRL).concat("°F"));
+                labelTireTempRR.textProperty().bind(Bindings.format("%5.1f", engineer.tireTempRR).concat("°F"));
+            }
+        });
+
+        labelCarSpeed.textProperty().bind(Bindings.format("%5.1f", engineer.carSpeed).concat(" m/s"));
+        labelCarPower.textProperty().bind(Bindings.format("%5.0f", engineer.carPower.divide(1000)).concat(" kW"));
+        labelCarTorque.textProperty().bind(Bindings.format("%5.0f", engineer.carTorque).concat(" Nm"));
+        labelCarBoost.textProperty().bind(Bindings.format("%5.1f", engineer.carBoost).concat(" psi"));
+
+        labelCarPositionX.textProperty().bind(Bindings.format("%5.2f", engineer.carPositionX));
+        labelCarPositionY.textProperty().bind(Bindings.format("%5.2f", engineer.carPositionY));
+        labelCarPositionZ.textProperty().bind(Bindings.format("%5.2f", engineer.carPositionZ));
+
+        labelRaceDistanceTravelled.textProperty().bind(Bindings.format("%5.3f", engineer.raceDistanceTravelled.divide(1000)).concat(" km"));
+        labelRaceFuel.textProperty().bind(Bindings.format("%5.2f", engineer.raceFuel.multiply(100)).concat("%"));
+        progressRaceFuel.progressProperty().bind(engineer.raceFuel);
+        labelRaceLapNumber.textProperty().bind(engineer.raceLapNumber.add(1).asString());
+
+        engineer.raceCurrentLap.addListener(observable -> {
+            labelRaceCurrentLap.textProperty().bind(getTimeString(engineer.raceCurrentLap.getValue()));
+        });
+        engineer.raceLastLap.addListener(observable -> {
+            labelRaceLastLap.textProperty().bind(getTimeString(engineer.raceLastLap.getValue()));
+        });
+        engineer.raceBestLap.addListener(observable -> {
+            labelRaceBestLap.textProperty().bind(getTimeString(engineer.raceBestLap.getValue()));
+        });
+        engineer.raceCurrentRaceTime.addListener(observable -> {
+            labelRaceCurrentRaceTime.textProperty().bind(getTimeString(engineer.raceCurrentRaceTime.getValue()));
+        });
+
+
+        labelRacePosition.textProperty().bind(engineer.racePosition.asString());
+        labelRaceNormalizedDrivingLine.textProperty().bind(engineer.raceNormalizedDrivingLine.asString());
+        progressRaceNormalizedDrivingLine.progressProperty().bind(engineer.raceNormalizedDrivingLine.divide(255.0).add(0.5));
+        labelRaceNormalizedAIBrakeDifference.textProperty().bind(engineer.raceNormalizedAIBrakeDifference.asString());
+        progressRaceNormalizedAIBrakeDifference.progressProperty().bind(engineer.raceNormalizedAIBrakeDifference.divide(255.0).add(0.5));
+        labelCarAccel.textProperty().bind(engineer.carAccel.asString());
+        progressCarAccel.progressProperty().bind(engineer.carAccel.divide(255.0));
+        labelCarBrake.textProperty().bind(engineer.carBrake.asString());
+        progressCarBrake.progressProperty().bind(engineer.carBrake.divide(255.0));
+        labelCarHandbrake.textProperty().bind(engineer.carHandBrake.asString());
+        progressCarHandbrake.progressProperty().bind(engineer.carHandBrake.divide(255.0));
+        labelCarClutch.textProperty().bind(engineer.carClutch.asString());
+        progressCarClutch.progressProperty().bind(engineer.carClutch.divide(255.0));
+        labelCarSteer.textProperty().bind(engineer.carSteer.asString());
+        progressCarSteer.progressProperty().bind(engineer.carSteer.divide(255.0).add(0.5));
+
         try {
             spAddressLocalIP.setValue(Inet4Address.getLocalHost().getHostAddress());
-        } catch (Exception e){
-            System.out.println("Error reading local IP: "+e.toString());
+        } catch (Exception e) {
+            System.out.println("Error reading local IP: " + e.toString());
         }
 
 
@@ -520,14 +686,14 @@ public class ForzaGuiController {
                 buttonResize.setText("Restore Window");
                 maximized.setValue(true);
 
-            } else{
+            } else {
                 tmpStage.setMaximized(false);
                 buttonResize.setText("Maximize Window");
                 maximized.setValue(false);
             }
             horizontalScale.setValue(buttonResizeDrag.getScene().getWindow().getWidth() / INITIAL_HSCALE);
             verticalScale.setValue(buttonResizeDrag.getScene().getWindow().getHeight() / INITIAL_VSCALE);
-            scaledFontSize = Math.min(verticalScale.getValue(),horizontalScale.getValue())* INITIAL_FONTSIZE;
+            scaledFontSize = Math.min(verticalScale.getValue(), horizontalScale.getValue()) * INITIAL_FONTSIZE;
             resizeFont();
             rescale();
 
@@ -542,7 +708,7 @@ public class ForzaGuiController {
             buttonResizeDrag.getScene().getWindow().setHeight(event.getY() + windowSizeY);
             horizontalScale.setValue(buttonResizeDrag.getScene().getWindow().getWidth() / INITIAL_HSCALE);
             verticalScale.setValue(buttonResizeDrag.getScene().getWindow().getHeight() / INITIAL_VSCALE);
-            scaledFontSize = Math.min(verticalScale.getValue(),horizontalScale.getValue())* INITIAL_FONTSIZE;
+            scaledFontSize = Math.min(verticalScale.getValue(), horizontalScale.getValue()) * INITIAL_FONTSIZE;
             resizeFont();
             rescale();
 
@@ -587,104 +753,138 @@ public class ForzaGuiController {
         buttonRpmMaxMeasuredReset.setOnAction(event -> {
             engineer.rpmMaxMeasured.setValue(1);
         });
-
+        rescale();
     }
 
     private void rescale() {
-        progressTireSlipRatioFL.setPrefWidth(progressTireSlipRatioFL.getMinWidth()*verticalScale.getValue());
-        progressTireSlipRatioFL.setPrefHeight(progressTireSlipRatioFL.getMinHeight()*horizontalScale.getValue());
-        progressTireSlipRatioFR.setPrefWidth(progressTireSlipRatioFR.getMinWidth()*verticalScale.getValue());
-        progressTireSlipRatioFR.setPrefHeight(progressTireSlipRatioFR.getMinHeight()*horizontalScale.getValue());
-        progressTireSlipRatioRL.setPrefWidth(progressTireSlipRatioRL.getMinWidth()*verticalScale.getValue());
-        progressTireSlipRatioRL.setPrefHeight(progressTireSlipRatioRL.getMinHeight()*horizontalScale.getValue());
-        progressTireSlipRatioRR.setPrefWidth(progressTireSlipRatioRR.getMinWidth()*verticalScale.getValue());
-        progressTireSlipRatioRR.setPrefHeight(progressTireSlipRatioRR.getMinHeight()*horizontalScale.getValue());
+        progressTireSlipRatioFL.setPrefWidth(progressTireSlipRatioFL.getMinWidth() * verticalScale.getValue());
+        progressTireSlipRatioFL.setPrefHeight(progressTireSlipRatioFL.getMinHeight() * horizontalScale.getValue());
+        progressTireSlipRatioFR.setPrefWidth(progressTireSlipRatioFR.getMinWidth() * verticalScale.getValue());
+        progressTireSlipRatioFR.setPrefHeight(progressTireSlipRatioFR.getMinHeight() * horizontalScale.getValue());
+        progressTireSlipRatioRL.setPrefWidth(progressTireSlipRatioRL.getMinWidth() * verticalScale.getValue());
+        progressTireSlipRatioRL.setPrefHeight(progressTireSlipRatioRL.getMinHeight() * horizontalScale.getValue());
+        progressTireSlipRatioRR.setPrefWidth(progressTireSlipRatioRR.getMinWidth() * verticalScale.getValue());
+        progressTireSlipRatioRR.setPrefHeight(progressTireSlipRatioRR.getMinHeight() * horizontalScale.getValue());
 
-        progressTireSlipAngleFL.setPrefWidth(progressTireSlipAngleFL.getMinWidth()*verticalScale.getValue());
-        progressTireSlipAngleFL.setPrefHeight(progressTireSlipAngleFL.getMinHeight()*horizontalScale.getValue());
-        progressTireSlipAngleFR.setPrefWidth(progressTireSlipAngleFR.getMinWidth()*verticalScale.getValue());
-        progressTireSlipAngleFR.setPrefHeight(progressTireSlipAngleFR.getMinHeight()*horizontalScale.getValue());
-        progressTireSlipAngleRL.setPrefWidth(progressTireSlipAngleRL.getMinWidth()*verticalScale.getValue());
-        progressTireSlipAngleRL.setPrefHeight(progressTireSlipAngleRL.getMinHeight()*horizontalScale.getValue());
-        progressTireSlipAngleRR.setPrefWidth(progressTireSlipAngleRR.getMinWidth()*verticalScale.getValue());
-        progressTireSlipAngleRR.setPrefHeight(progressTireSlipAngleRR.getMinHeight()*horizontalScale.getValue());
+        progressTireSlipAngleFL.setPrefWidth(progressTireSlipAngleFL.getMinWidth() * verticalScale.getValue());
+        progressTireSlipAngleFL.setPrefHeight(progressTireSlipAngleFL.getMinHeight() * horizontalScale.getValue());
+        progressTireSlipAngleFR.setPrefWidth(progressTireSlipAngleFR.getMinWidth() * verticalScale.getValue());
+        progressTireSlipAngleFR.setPrefHeight(progressTireSlipAngleFR.getMinHeight() * horizontalScale.getValue());
+        progressTireSlipAngleRL.setPrefWidth(progressTireSlipAngleRL.getMinWidth() * verticalScale.getValue());
+        progressTireSlipAngleRL.setPrefHeight(progressTireSlipAngleRL.getMinHeight() * horizontalScale.getValue());
+        progressTireSlipAngleRR.setPrefWidth(progressTireSlipAngleRR.getMinWidth() * verticalScale.getValue());
+        progressTireSlipAngleRR.setPrefHeight(progressTireSlipAngleRR.getMinHeight() * horizontalScale.getValue());
 
-        progressTireSlipIndicatedFL.setPrefWidth(progressTireSlipIndicatedFL.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipIndicatedFL.setPrefHeight(progressTireSlipIndicatedFL.getMinHeight()*verticalScale.getValue());
-        progressTireSlipIndicatedFR.setPrefWidth(progressTireSlipIndicatedFR.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipIndicatedFR.setPrefHeight(progressTireSlipIndicatedFR.getMinHeight()*verticalScale.getValue());
-        progressTireSlipIndicatedRL.setPrefWidth(progressTireSlipIndicatedRL.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipIndicatedRL.setPrefHeight(progressTireSlipIndicatedRL.getMinHeight()*verticalScale.getValue());
-        progressTireSlipIndicatedRR.setPrefWidth(progressTireSlipIndicatedRR.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipIndicatedRR.setPrefHeight(progressTireSlipIndicatedRR.getMinHeight()*verticalScale.getValue());
+        progressTireSlipIndicatedFL.setPrefWidth(progressTireSlipIndicatedFL.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipIndicatedFL.setPrefHeight(progressTireSlipIndicatedFL.getMinHeight() * verticalScale.getValue());
+        progressTireSlipIndicatedFR.setPrefWidth(progressTireSlipIndicatedFR.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipIndicatedFR.setPrefHeight(progressTireSlipIndicatedFR.getMinHeight() * verticalScale.getValue());
+        progressTireSlipIndicatedRL.setPrefWidth(progressTireSlipIndicatedRL.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipIndicatedRL.setPrefHeight(progressTireSlipIndicatedRL.getMinHeight() * verticalScale.getValue());
+        progressTireSlipIndicatedRR.setPrefWidth(progressTireSlipIndicatedRR.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipIndicatedRR.setPrefHeight(progressTireSlipIndicatedRR.getMinHeight() * verticalScale.getValue());
 
-        progressTireSlipAngleIndicatedFL.setPrefWidth(progressTireSlipAngleIndicatedFL.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipAngleIndicatedFL.setPrefHeight(progressTireSlipAngleIndicatedFL.getMinHeight()*verticalScale.getValue());
-        progressTireSlipAngleIndicatedFR.setPrefWidth(progressTireSlipAngleIndicatedFR.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipAngleIndicatedFR.setPrefHeight(progressTireSlipAngleIndicatedFR.getMinHeight()*verticalScale.getValue());
-        progressTireSlipAngleIndicatedRL.setPrefWidth(progressTireSlipAngleIndicatedRL.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipAngleIndicatedRL.setPrefHeight(progressTireSlipAngleIndicatedRL.getMinHeight()*verticalScale.getValue());
-        progressTireSlipAngleIndicatedRR.setPrefWidth(progressTireSlipAngleIndicatedRR.getMinWidth()*horizontalScale.getValue());
-        progressTireSlipAngleIndicatedRR.setPrefHeight(progressTireSlipAngleIndicatedRR.getMinHeight()*verticalScale.getValue());
+        progressTireSlipAngleIndicatedFL.setPrefWidth(progressTireSlipAngleIndicatedFL.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipAngleIndicatedFL.setPrefHeight(progressTireSlipAngleIndicatedFL.getMinHeight() * verticalScale.getValue());
+        progressTireSlipAngleIndicatedFR.setPrefWidth(progressTireSlipAngleIndicatedFR.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipAngleIndicatedFR.setPrefHeight(progressTireSlipAngleIndicatedFR.getMinHeight() * verticalScale.getValue());
+        progressTireSlipAngleIndicatedRL.setPrefWidth(progressTireSlipAngleIndicatedRL.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipAngleIndicatedRL.setPrefHeight(progressTireSlipAngleIndicatedRL.getMinHeight() * verticalScale.getValue());
+        progressTireSlipAngleIndicatedRR.setPrefWidth(progressTireSlipAngleIndicatedRR.getMinWidth() * horizontalScale.getValue());
+        progressTireSlipAngleIndicatedRR.setPrefHeight(progressTireSlipAngleIndicatedRR.getMinHeight() * verticalScale.getValue());
 
-        progressSuspensionTravelFL.setPrefWidth(progressSuspensionTravelFL.getMinWidth()*verticalScale.getValue());
-        progressSuspensionTravelFL.setPrefHeight(progressSuspensionTravelFL.getMinHeight()*horizontalScale.getValue());
-        progressSuspensionTravelFR.setPrefWidth(progressSuspensionTravelFR.getMinWidth()*verticalScale.getValue());
-        progressSuspensionTravelFR.setPrefHeight(progressSuspensionTravelFR.getMinHeight()*horizontalScale.getValue());
-        progressSuspensionTravelRL.setPrefWidth(progressSuspensionTravelRL.getMinWidth()*verticalScale.getValue());
-        progressSuspensionTravelRL.setPrefHeight(progressSuspensionTravelRL.getMinHeight()*horizontalScale.getValue());
-        progressSuspensionTravelRR.setPrefWidth(progressSuspensionTravelRR.getMinWidth()*verticalScale.getValue());
-        progressSuspensionTravelRR.setPrefHeight(progressSuspensionTravelRR.getMinHeight()*horizontalScale.getValue());
+        progressSuspensionTravelFL.setPrefWidth(progressSuspensionTravelFL.getMinWidth() * verticalScale.getValue());
+        progressSuspensionTravelFL.setPrefHeight(progressSuspensionTravelFL.getMinHeight() * horizontalScale.getValue());
+        progressSuspensionTravelFR.setPrefWidth(progressSuspensionTravelFR.getMinWidth() * verticalScale.getValue());
+        progressSuspensionTravelFR.setPrefHeight(progressSuspensionTravelFR.getMinHeight() * horizontalScale.getValue());
+        progressSuspensionTravelRL.setPrefWidth(progressSuspensionTravelRL.getMinWidth() * verticalScale.getValue());
+        progressSuspensionTravelRL.setPrefHeight(progressSuspensionTravelRL.getMinHeight() * horizontalScale.getValue());
+        progressSuspensionTravelRR.setPrefWidth(progressSuspensionTravelRR.getMinWidth() * verticalScale.getValue());
+        progressSuspensionTravelRR.setPrefHeight(progressSuspensionTravelRR.getMinHeight() * horizontalScale.getValue());
 
-        progressWheelInPuddleDepthFL.setPrefWidth(progressWheelInPuddleDepthFL.getMinWidth()*verticalScale.getValue());
-        progressWheelInPuddleDepthFL.setPrefHeight(progressWheelInPuddleDepthFL.getMinHeight()*horizontalScale.getValue());
-        progressWheelInPuddleDepthFR.setPrefWidth(progressWheelInPuddleDepthFR.getMinWidth()*verticalScale.getValue());
-        progressWheelInPuddleDepthFR.setPrefHeight(progressWheelInPuddleDepthFR.getMinHeight()*horizontalScale.getValue());
-        progressWheelInPuddleDepthRL.setPrefWidth(progressWheelInPuddleDepthRL.getMinWidth()*verticalScale.getValue());
-        progressWheelInPuddleDepthRL.setPrefHeight(progressWheelInPuddleDepthRL.getMinHeight()*horizontalScale.getValue());
-        progressWheelInPuddleDepthRR.setPrefWidth(progressWheelInPuddleDepthRR.getMinWidth()*verticalScale.getValue());
-        progressWheelInPuddleDepthRR.setPrefHeight(progressWheelInPuddleDepthRR.getMinHeight()*horizontalScale.getValue());
+        progressWheelInPuddleDepthFL.setPrefWidth(progressWheelInPuddleDepthFL.getMinWidth() * verticalScale.getValue());
+        progressWheelInPuddleDepthFL.setPrefHeight(progressWheelInPuddleDepthFL.getMinHeight() * horizontalScale.getValue());
+        progressWheelInPuddleDepthFR.setPrefWidth(progressWheelInPuddleDepthFR.getMinWidth() * verticalScale.getValue());
+        progressWheelInPuddleDepthFR.setPrefHeight(progressWheelInPuddleDepthFR.getMinHeight() * horizontalScale.getValue());
+        progressWheelInPuddleDepthRL.setPrefWidth(progressWheelInPuddleDepthRL.getMinWidth() * verticalScale.getValue());
+        progressWheelInPuddleDepthRL.setPrefHeight(progressWheelInPuddleDepthRL.getMinHeight() * horizontalScale.getValue());
+        progressWheelInPuddleDepthRR.setPrefWidth(progressWheelInPuddleDepthRR.getMinWidth() * verticalScale.getValue());
+        progressWheelInPuddleDepthRR.setPrefHeight(progressWheelInPuddleDepthRR.getMinHeight() * horizontalScale.getValue());
 
-        progressSurfaceRumbleFL.setPrefWidth(progressSurfaceRumbleFL.getMinWidth()*horizontalScale.getValue());
-        progressSurfaceRumbleFL.setPrefHeight(progressSurfaceRumbleFL.getMinHeight()*verticalScale.getValue());
-        progressSurfaceRumbleFR.setPrefWidth(progressSurfaceRumbleFR.getMinWidth()*horizontalScale.getValue());
-        progressSurfaceRumbleFR.setPrefHeight(progressSurfaceRumbleFR.getMinHeight()*verticalScale.getValue());
-        progressSurfaceRumbleRL.setPrefWidth(progressSurfaceRumbleRL.getMinWidth()*horizontalScale.getValue());
-        progressSurfaceRumbleRL.setPrefHeight(progressSurfaceRumbleRL.getMinHeight()*verticalScale.getValue());
-        progressSurfaceRumbleRR.setPrefWidth(progressSurfaceRumbleRR.getMinWidth()*horizontalScale.getValue());
-        progressSurfaceRumbleRR.setPrefHeight(progressSurfaceRumbleRR.getMinHeight()*verticalScale.getValue());
+        progressSurfaceRumbleFL.setPrefWidth(progressSurfaceRumbleFL.getMinWidth() * horizontalScale.getValue());
+        progressSurfaceRumbleFL.setPrefHeight(progressSurfaceRumbleFL.getMinHeight() * verticalScale.getValue());
+        progressSurfaceRumbleFR.setPrefWidth(progressSurfaceRumbleFR.getMinWidth() * horizontalScale.getValue());
+        progressSurfaceRumbleFR.setPrefHeight(progressSurfaceRumbleFR.getMinHeight() * verticalScale.getValue());
+        progressSurfaceRumbleRL.setPrefWidth(progressSurfaceRumbleRL.getMinWidth() * horizontalScale.getValue());
+        progressSurfaceRumbleRL.setPrefHeight(progressSurfaceRumbleRL.getMinHeight() * verticalScale.getValue());
+        progressSurfaceRumbleRR.setPrefWidth(progressSurfaceRumbleRR.getMinWidth() * horizontalScale.getValue());
+        progressSurfaceRumbleRR.setPrefHeight(progressSurfaceRumbleRR.getMinHeight() * verticalScale.getValue());
 
-        progressWheelOnRumbleStripFL.setPrefWidth(progressWheelOnRumbleStripFL.getMinWidth()*horizontalScale.getValue());
-        progressWheelOnRumbleStripFL.setPrefHeight(progressWheelOnRumbleStripFL.getMinHeight()*verticalScale.getValue());
-        progressWheelOnRumbleStripFR.setPrefWidth(progressWheelOnRumbleStripFR.getMinWidth()*horizontalScale.getValue());
-        progressWheelOnRumbleStripFR.setPrefHeight(progressWheelOnRumbleStripFR.getMinHeight()*verticalScale.getValue());
-        progressWheelOnRumbleStripRL.setPrefWidth(progressWheelOnRumbleStripRL.getMinWidth()*horizontalScale.getValue());
-        progressWheelOnRumbleStripRL.setPrefHeight(progressWheelOnRumbleStripRL.getMinHeight()*verticalScale.getValue());
-        progressWheelOnRumbleStripRR.setPrefWidth(progressWheelOnRumbleStripRR.getMinWidth()*horizontalScale.getValue());
-        progressWheelOnRumbleStripRR.setPrefHeight(progressWheelOnRumbleStripRR.getMinHeight()*verticalScale.getValue());
+        progressWheelOnRumbleStripFL.setPrefWidth(progressWheelOnRumbleStripFL.getMinWidth() * horizontalScale.getValue());
+        progressWheelOnRumbleStripFL.setPrefHeight(progressWheelOnRumbleStripFL.getMinHeight() * verticalScale.getValue());
+        progressWheelOnRumbleStripFR.setPrefWidth(progressWheelOnRumbleStripFR.getMinWidth() * horizontalScale.getValue());
+        progressWheelOnRumbleStripFR.setPrefHeight(progressWheelOnRumbleStripFR.getMinHeight() * verticalScale.getValue());
+        progressWheelOnRumbleStripRL.setPrefWidth(progressWheelOnRumbleStripRL.getMinWidth() * horizontalScale.getValue());
+        progressWheelOnRumbleStripRL.setPrefHeight(progressWheelOnRumbleStripRL.getMinHeight() * verticalScale.getValue());
+        progressWheelOnRumbleStripRR.setPrefWidth(progressWheelOnRumbleStripRR.getMinWidth() * horizontalScale.getValue());
+        progressWheelOnRumbleStripRR.setPrefHeight(progressWheelOnRumbleStripRR.getMinHeight() * verticalScale.getValue());
 
-        sliderShiftIndicatorThresholdLow.setPrefWidth(sliderShiftIndicatorThresholdLow.getMinWidth()*horizontalScale.getValue());
-        sliderShiftIndicatorThresholdHigh.setPrefWidth(sliderShiftIndicatorThresholdHigh.getMinWidth()*horizontalScale.getValue());
+        sliderShiftIndicatorThresholdLow.setPrefWidth(sliderShiftIndicatorThresholdLow.getMinWidth() * horizontalScale.getValue());
+        sliderShiftIndicatorThresholdHigh.setPrefWidth(sliderShiftIndicatorThresholdHigh.getMinWidth() * horizontalScale.getValue());
+        sliderTemperatureUnits.setPrefWidth(sliderTemperatureUnits.getMinWidth() * horizontalScale.getValue());
 
-        progressAccelerationCurrent.setPrefWidth(progressAccelerationCurrent.getMinWidth()*horizontalScale.getValue());
-        progressAccelerationCurrent.setPrefHeight(progressAccelerationCurrent.getMinHeight()*verticalScale.getValue());
-        progressDecelerationCurrent.setPrefWidth(progressDecelerationCurrent.getMinWidth()*horizontalScale.getValue());
-        progressDecelerationCurrent.setPrefHeight(progressDecelerationCurrent.getMinHeight()*verticalScale.getValue());
+
+        progressAccelerationCurrent.setPrefWidth(progressAccelerationCurrent.getMinWidth() * horizontalScale.getValue());
+        progressAccelerationCurrent.setPrefHeight(progressAccelerationCurrent.getMinHeight() * verticalScale.getValue());
+        progressDecelerationCurrent.setPrefWidth(progressDecelerationCurrent.getMinWidth() * horizontalScale.getValue());
+        progressDecelerationCurrent.setPrefHeight(progressDecelerationCurrent.getMinHeight() * verticalScale.getValue());
+
+        progressRaceFuel.setPrefWidth(progressRaceFuel.getMinWidth() * verticalScale.getValue());
+        progressRaceFuel.setPrefHeight(progressRaceFuel.getMinHeight() * horizontalScale.getValue());
+
+        progressRaceNormalizedDrivingLine.setPrefWidth(progressRaceNormalizedDrivingLine.getMinWidth() * horizontalScale.getValue());
+        progressRaceNormalizedDrivingLine.setPrefHeight(progressRaceNormalizedDrivingLine.getMinHeight() * verticalScale.getValue());
+        progressRaceNormalizedAIBrakeDifference.setPrefWidth(progressRaceNormalizedAIBrakeDifference.getMinWidth() * horizontalScale.getValue());
+        progressRaceNormalizedAIBrakeDifference.setPrefHeight(progressRaceNormalizedAIBrakeDifference.getMinHeight() * verticalScale.getValue());
+        progressCarAccel.setPrefWidth(progressCarAccel.getMinWidth() * horizontalScale.getValue());
+        progressCarAccel.setPrefHeight(progressCarAccel.getMinHeight() * verticalScale.getValue());
+        progressCarBrake.setPrefWidth(progressCarBrake.getMinWidth() * horizontalScale.getValue());
+        progressCarBrake.setPrefHeight(progressCarBrake.getMinHeight() * verticalScale.getValue());
+        progressCarHandbrake.setPrefWidth(progressCarHandbrake.getMinWidth() * horizontalScale.getValue());
+        progressCarHandbrake.setPrefHeight(progressCarHandbrake.getMinHeight() * verticalScale.getValue());
+        progressCarClutch.setPrefWidth(progressCarClutch.getMinWidth() * horizontalScale.getValue());
+        progressCarClutch.setPrefHeight(progressCarClutch.getMinHeight() * verticalScale.getValue());
+        progressCarSteer.setPrefWidth(progressCarSteer.getMinWidth() * horizontalScale.getValue());
+        progressCarSteer.setPrefHeight(progressCarSteer.getMinHeight() * verticalScale.getValue());
+
 
     }
 
     private void resizeFont() {
-        for (Node n: acDetailInfo.lookupAll(".label")){
-            n.setStyle("-fx-font-size: "+scaledFontSize+"px;");
+        for (Node n : tpDetailInfo.lookupAll(".label")) {
+            n.setStyle("-fx-font-size: " + scaledFontSize + "px;");
         }
-        for (Node n: borderPaneRoot.lookupAll(".button")){
-            n.setStyle("-fx-font-size: "+scaledFontSize+"px;");
+        for (Node n : borderPaneRoot.lookupAll(".button")) {
+            n.setStyle("-fx-font-size: " + scaledFontSize + "px;");
         }
-        for (Node n: acDetailInfo.lookupAll(".titled-pane")){
-            n.setStyle("-fx-font-size: "+scaledFontSize+"px;");
+        for (Node n : tpDetailInfo.lookupAll(".tab-label")) {
+            n.setStyle("-fx-font-size: " + scaledFontSize + "px;");
         }
+        tpDetailInfo.setTabMaxHeight(verticalScale.getValue() * 20);
+        tpDetailInfo.setTabMaxWidth(horizontalScale.getValue() * 200);
+
 
     }
+
+    private StringExpression getTimeString(double input) {
+        int hours = (int) input / 3600;
+        int minutes = (int) (input / 60) % 60;
+        int seconds = (int) input % 60;
+        int milliseconds = (int) (input * 1000) % 1000;
+
+        return StringFormatter.format("%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
+    }
+
 
     private Properties loadConfiguration(Properties newConfiguration) {
         try {

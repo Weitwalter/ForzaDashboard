@@ -46,15 +46,16 @@ public class ForzaDataOutReader {
                         // Wait to receive a datagram
                         dsocket.receive(packet);
                         final byte[] thisBuffer = packet.getData();
-                        //immediately forward data
+                        final byte[] helpBuffer = new byte[4];
 
                         Platform.runLater(() -> {
                             try {
                                 engineer.isRaceOn.setValue(getBytes(thisBuffer, 0, 4).getInt());
-                                engineer.timestamp.setValue(getBytes(thisBuffer, 4, 8).getInt()); //technically unsigned. irrelevant as long as value is below Integer.MAX_VALUE
+                                engineer.timestamp.setValue(getBytes(thisBuffer, 4, 8).getInt()); //technically unsigned.
 
                                 if (engineer.isRaceOn.getValue() == 1) {
 
+                                    //V1 (SLED) Values
                                     engineer.rpmMax.setValue(getBytes(thisBuffer, 8, 12).getFloat());
                                     engineer.rpmIdle.setValue(getBytes(thisBuffer, 12, 16).getFloat());
                                     engineer.rpmCurrent.setValue(getBytes(thisBuffer, 16, 20).getFloat());
@@ -125,6 +126,42 @@ public class ForzaDataOutReader {
                                     engineer.carPerformanceIndex.setValue(getBytes(thisBuffer, 220, 224).getInt());
                                     engineer.drivetrainType.setValue(getBytes(thisBuffer, 224, 228).getInt());
                                     engineer.numOfCylinders.setValue(getBytes(thisBuffer, 228, 232).getInt());
+
+                                    //V2 (Dash) Values
+                                    engineer.carPositionX.setValue(getBytes(thisBuffer, 232, 236).getFloat());
+                                    engineer.carPositionY.setValue(getBytes(thisBuffer, 236, 240).getFloat());
+                                    engineer.carPositionZ.setValue(getBytes(thisBuffer, 240, 244).getFloat());
+
+                                    engineer.carSpeed.setValue(getBytes(thisBuffer, 244, 248).getFloat());
+                                    engineer.carPower.setValue(getBytes(thisBuffer, 248, 252).getFloat());
+                                    engineer.carTorque.setValue(getBytes(thisBuffer, 252, 256).getFloat());
+
+                                    engineer.tireTempFL.setValue(getBytes(thisBuffer, 256, 260).getFloat());
+                                    engineer.tireTempFR.setValue(getBytes(thisBuffer, 260, 264).getFloat());
+                                    engineer.tireTempRL.setValue(getBytes(thisBuffer, 264, 268).getFloat());
+                                    engineer.tireTempRR.setValue(getBytes(thisBuffer, 268, 272).getFloat());
+
+                                    engineer.carBoost.setValue(getBytes(thisBuffer, 272, 276).getFloat());
+                                    engineer.raceFuel.setValue(getBytes(thisBuffer, 276, 280).getFloat());
+                                    engineer.raceDistanceTravelled.setValue(getBytes(thisBuffer, 280, 284).getFloat());
+                                    engineer.raceBestLap.setValue(getBytes(thisBuffer, 284, 288).getFloat());
+                                    engineer.raceLastLap.setValue(getBytes(thisBuffer, 288, 292).getFloat());
+                                    engineer.raceCurrentLap.setValue(getBytes(thisBuffer, 292, 296).getFloat());
+                                    engineer.raceCurrentRaceTime.setValue(getBytes(thisBuffer, 296, 300).getFloat());
+
+
+                                    engineer.raceLapNumber.setValue((int) getBytes(thisBuffer, 300, 302).get()); //technically unsigned
+                                    engineer.racePosition.setValue((int) getBytes(thisBuffer, 302, 303).get()); //technically unsigned
+                                    engineer.carAccel.setValue((int) getBytes(thisBuffer, 303, 304).get() & 0xFF); //due to being uint8
+                                    engineer.carBrake.setValue((int) getBytes(thisBuffer, 304, 305).get() & 0xFF); //due to being uint8
+                                    engineer.carClutch.setValue((int) getBytes(thisBuffer, 305, 306).get() & 0xFF); //due to being uint8
+                                    engineer.carHandBrake.setValue((int) getBytes(thisBuffer, 306, 307).get() & 0xFF); //due to being uint8
+                                    engineer.carGear.setValue((int) getBytes(thisBuffer, 307, 308).get() & 0xFF);//due to being uint8
+                                    engineer.carSteer.setValue((int) getBytes(thisBuffer, 308, 309).get());
+
+                                    engineer.raceNormalizedDrivingLine.setValue((int) getBytes(thisBuffer, 309, 310).get());
+                                    engineer.raceNormalizedAIBrakeDifference.setValue((int) getBytes(thisBuffer, 310, 311).get());
+
 
                                     //calculated
                                     engineer.rpmMaxMeasured.setValue(Math.max(engineer.rpmMaxMeasured.getValue(), engineer.rpmCurrent.getValue()));
