@@ -4,7 +4,6 @@ Forza Motorsport 7 data-out receiver
 What it's intended for:
 I'm usually driving manual (sometimes with clutch) and frequent car changes make it difficult to get those upshifts right. I can either focus on the track or on the rpm-display.
 The shift-indicators some cars provide also don't help much due to them working differently for each car (growing, flashing, blinking...aaargh!)
-Also, a far-off goal is to include data history and further telemetry so that the dashboard helps empirically optimize driving (and tuning) through data analysis per car.
 
 What it does:
 This simple dashboard shows a singular shift-indicator all the time, no matter which car I'm driving in and how many rpm the engine can do.
@@ -25,8 +24,5 @@ Maximizing, Resizing, dragging without the windows bar on top cluttering the inf
 
 (some) car data stored in .properties file - for each car that you've actually driven using the dashboard. so after a while, It could be complete.
 
-
-What it is not:
-The dashboard is just a first draft.
-There are sure to be bugs in it (like the ugly drag-resizing).
-I intend to include all data-out datapoints in an readable fashion (think telemetry display like the overlay in FM itself) at some point.
+Update:
+recently added laptime display (still a little buggy) to show each laptime as well as delta to the lap before and fuel consumption
