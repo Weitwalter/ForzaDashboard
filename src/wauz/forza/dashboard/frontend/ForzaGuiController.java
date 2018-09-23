@@ -6,6 +6,8 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.DoubleExpression;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -23,6 +25,24 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 public class ForzaGuiController {
+    @FXML
+    Label labelRaceFuelCurrentLap;
+    @FXML
+    Label labelCarPower1;
+    @FXML
+    Label labelCarTorque1;
+    @FXML
+    Label labelCarBoost1;
+    @FXML
+    ProgressBar progressCarBrake1;
+    @FXML
+    Label labelCarBrake1;
+    @FXML
+    ProgressBar progressCarAccel1;
+    @FXML
+    Label labelCarAccel1;
+    @FXML
+    ListView<String> listRaceTimes;
     @FXML
     ProgressBar progressRaceNormalizedDrivingLine;
     @FXML
@@ -362,7 +382,6 @@ public class ForzaGuiController {
     Label labelCarGearLabel;
     @FXML
     Label labelCarSteer;
-
     @FXML
     Label labelRaceNormalizedDrivingLine;
     @FXML
@@ -386,6 +405,7 @@ public class ForzaGuiController {
     private double scaledFontSize;
     private static final double INITIAL_FONTSIZE = 12;
     private IntegerProperty temperatureUnits = new SimpleIntegerProperty();
+    private ObservableList<String> listDataLapTimes = FXCollections.observableArrayList();
 
 
     public ForzaGuiController() {
@@ -408,8 +428,8 @@ public class ForzaGuiController {
         }
 
         //bind config
-        labelShiftIndicatorThresholdLow.textProperty().bind(Bindings.format("%2.0f", engineer.shiftWarningThresholdLow));
-        labelShiftIndicatorThresholdHigh.textProperty().bind(Bindings.format("%2.0f", engineer.shiftWarningThresholdHigh));
+        labelShiftIndicatorThresholdLow.textProperty().bind(Bindings.format("%2.0f", engineer.shiftWarningThresholdLow).concat("%"));
+        labelShiftIndicatorThresholdHigh.textProperty().bind(Bindings.format("%2.0f", engineer.shiftWarningThresholdHigh).concat("%"));
         sliderShiftIndicatorThresholdLow.maxProperty().setValue(98);
         sliderShiftIndicatorThresholdLow.setValue(engineer.shiftWarningThresholdLow.getValue());
         engineer.shiftWarningThresholdLow.bindBidirectional(sliderShiftIndicatorThresholdLow.valueProperty());
@@ -418,30 +438,23 @@ public class ForzaGuiController {
         engineer.shiftWarningThresholdHigh.bindBidirectional(sliderShiftIndicatorThresholdHigh.valueProperty());
 
         engineer.carDescription.bindBidirectional(textCarDescription.textProperty());
-
-        //bind main information display scaling
-        progressRpmCurrent.prefWidthProperty().bind(borderPaneRoot.widthProperty().multiply(0.45));
-        progressRpmCurrent.prefHeightProperty().bind(borderPaneRoot.heightProperty().multiply(0.1));
-        labelRpmCurrent.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(35), ";"));
-        labelRpmZero.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
-        labelRpmMax.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
-
-        progressShiftWarning.prefHeightProperty().bind(borderPaneRoot.heightProperty().multiply(0.06));
-        progressShiftWarning.prefWidthProperty().bind(borderPaneRoot.widthProperty().multiply(0.7));
-        labelShiftIndicator.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(16), ";"));
-        labelShiftIndicatorLeft.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(16), ";"));
-        labelShiftIndicatorRight.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(16), ";"));
-
-        labelVelocityTrueKph.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(50), ";"));
-        labelVelocityTrueKphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
-        labelVelocityTrueMph.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
-        labelVelocityTrueMphLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
-
-        labelCarGear.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(72), ";"));
-        labelCarGearLabel.styleProperty().bind(Bindings.concat("-fx-font-size: ", verticalScale.multiply(24), ";"));
-
-
-        //bind data
+        //todo: fix last round not showing
+        listRaceTimes.setItems(listDataLapTimes);
+        listDataLapTimes.addAll("# | Lap Time      | Delta | Fuel | Pos.| Pos. Delta");
+        engineer.lapCalculationHelper.addListener((observable, oldValue, newValue) -> {
+            if (engineer.isRaceOn.intValue() == 1 && (oldValue.intValue() == 0 && newValue.intValue() == 1)) {
+                //todo: fix first lap position gain/loss.
+                listDataLapTimes.addAll("" + engineer.previousLapNumber.getValue().toString() + " | " + getTimeString(engineer.previousLapTime.getValue()).getValue() + " |       --- |   " + Bindings.format("%03.1f", engineer.previousLapFuel.multiply(100)).getValue() + "% | " + engineer.racePosition.getValue() + " | " + Bindings.format("%+2d", engineer.previousLapPositionChange).getValue());
+                listRaceTimes.scrollTo(listDataLapTimes.size() - 1);
+            } else if (engineer.isRaceOn.intValue() == 1 && (oldValue.intValue() != 0 && oldValue.intValue() < newValue.intValue())) {
+                listDataLapTimes.addAll("" + engineer.previousLapNumber.getValue().toString() + " | " + getTimeString(engineer.previousLapTime.getValue()).getValue() + " | " + Bindings.format("%+06.3f", engineer.previousLapTimeDifference).getValue() + " |   " + Bindings.format("%03.1f", engineer.previousLapFuel.multiply(100)).getValue() + "% | " + engineer.racePosition.getValue() + " | " + Bindings.format("%+2d", engineer.previousLapPositionChange).getValue());
+                listRaceTimes.scrollTo(listDataLapTimes.size() - 1);
+            } else if (engineer.isRaceOn.intValue() == 1 && engineer.lapCalculationHelper.getValue() == 0) {
+                listDataLapTimes.clear();
+                listDataLapTimes.addAll("# | Lap Time      | Delta | Fuel | Pos.| Pos. Delta");
+            }
+        });
+        labelRaceFuelCurrentLap.textProperty().bind(Bindings.format("%2.1f",engineer.lapStartRaceFuel.subtract(engineer.raceFuel).multiply(100)).concat("%"));
         DoubleBinding normalizedRpmCurrent = engineer.rpmCurrent.divide(engineer.rpmMax);
         progressRpmCurrent.progressProperty().bind(normalizedRpmCurrent);
         progressShiftWarning.progressProperty().bind(engineer.shiftWarning);
@@ -616,8 +629,11 @@ public class ForzaGuiController {
 
         labelCarSpeed.textProperty().bind(Bindings.format("%5.1f", engineer.carSpeed).concat(" m/s"));
         labelCarPower.textProperty().bind(Bindings.format("%5.0f", engineer.carPower.divide(1000)).concat(" kW"));
+        labelCarPower1.textProperty().bind(Bindings.format("%5.0f", engineer.carPower.divide(1000)).concat(" kW"));
         labelCarTorque.textProperty().bind(Bindings.format("%5.0f", engineer.carTorque).concat(" Nm"));
+        labelCarTorque1.textProperty().bind(Bindings.format("%5.0f", engineer.carTorque).concat(" Nm"));
         labelCarBoost.textProperty().bind(Bindings.format("%5.1f", engineer.carBoost).concat(" psi"));
+        labelCarBoost1.textProperty().bind(Bindings.format("%5.1f", engineer.carBoost).concat(" psi"));
 
         labelCarPositionX.textProperty().bind(Bindings.format("%5.2f", engineer.carPositionX));
         labelCarPositionY.textProperty().bind(Bindings.format("%5.2f", engineer.carPositionY));
@@ -649,8 +665,12 @@ public class ForzaGuiController {
         progressRaceNormalizedAIBrakeDifference.progressProperty().bind(engineer.raceNormalizedAIBrakeDifference.divide(255.0).add(0.5));
         labelCarAccel.textProperty().bind(engineer.carAccel.asString());
         progressCarAccel.progressProperty().bind(engineer.carAccel.divide(255.0));
+        labelCarAccel1.textProperty().bind(engineer.carAccel.asString());
+        progressCarAccel1.progressProperty().bind(engineer.carAccel.divide(255.0));
         labelCarBrake.textProperty().bind(engineer.carBrake.asString());
         progressCarBrake.progressProperty().bind(engineer.carBrake.divide(255.0));
+        labelCarBrake1.textProperty().bind(engineer.carBrake.asString());
+        progressCarBrake1.progressProperty().bind(engineer.carBrake.divide(255.0));
         labelCarHandbrake.textProperty().bind(engineer.carHandBrake.asString());
         progressCarHandbrake.progressProperty().bind(engineer.carHandBrake.divide(255.0));
         labelCarClutch.textProperty().bind(engineer.carClutch.asString());
@@ -757,6 +777,15 @@ public class ForzaGuiController {
     }
 
     private void rescale() {
+
+
+        listRaceTimes.setPrefWidth(listRaceTimes.getMinWidth() * horizontalScale.getValue());
+        listRaceTimes.setPrefHeight(listRaceTimes.getMinHeight() * verticalScale.getValue());
+        progressRpmCurrent.setPrefWidth(progressRpmCurrent.getMinWidth() * horizontalScale.getValue());
+        progressRpmCurrent.setPrefHeight(progressRpmCurrent.getMinHeight() * verticalScale.getValue());
+        progressShiftWarning.setPrefWidth(progressShiftWarning.getMinWidth() * horizontalScale.getValue());
+        progressShiftWarning.setPrefHeight(progressShiftWarning.getMinHeight() * verticalScale.getValue());
+
         progressTireSlipRatioFL.setPrefWidth(progressTireSlipRatioFL.getMinWidth() * verticalScale.getValue());
         progressTireSlipRatioFL.setPrefHeight(progressTireSlipRatioFL.getMinHeight() * horizontalScale.getValue());
         progressTireSlipRatioFR.setPrefWidth(progressTireSlipRatioFR.getMinWidth() * verticalScale.getValue());
@@ -850,6 +879,12 @@ public class ForzaGuiController {
         progressCarAccel.setPrefHeight(progressCarAccel.getMinHeight() * verticalScale.getValue());
         progressCarBrake.setPrefWidth(progressCarBrake.getMinWidth() * horizontalScale.getValue());
         progressCarBrake.setPrefHeight(progressCarBrake.getMinHeight() * verticalScale.getValue());
+
+        progressCarAccel1.setPrefWidth(progressCarAccel1.getMinWidth() * horizontalScale.getValue());
+        progressCarAccel1.setPrefHeight(progressCarAccel1.getMinHeight() * verticalScale.getValue());
+        progressCarBrake1.setPrefWidth(progressCarBrake1.getMinWidth() * horizontalScale.getValue());
+        progressCarBrake1.setPrefHeight(progressCarBrake1.getMinHeight() * verticalScale.getValue());
+
         progressCarHandbrake.setPrefWidth(progressCarHandbrake.getMinWidth() * horizontalScale.getValue());
         progressCarHandbrake.setPrefHeight(progressCarHandbrake.getMinHeight() * verticalScale.getValue());
         progressCarClutch.setPrefWidth(progressCarClutch.getMinWidth() * horizontalScale.getValue());
@@ -858,9 +893,11 @@ public class ForzaGuiController {
         progressCarSteer.setPrefHeight(progressCarSteer.getMinHeight() * verticalScale.getValue());
 
 
+
     }
 
     private void resizeFont() {
+
         for (Node n : tpDetailInfo.lookupAll(".label")) {
             n.setStyle("-fx-font-size: " + scaledFontSize + "px;");
         }
@@ -870,9 +907,27 @@ public class ForzaGuiController {
         for (Node n : tpDetailInfo.lookupAll(".tab-label")) {
             n.setStyle("-fx-font-size: " + scaledFontSize + "px;");
         }
+        textCarDescription.setStyle("-fx-font-size: " + scaledFontSize + "px;");
+        listRaceTimes.setStyle("-fx-font-size: " + scaledFontSize + "px;");
+
         tpDetailInfo.setTabMaxHeight(verticalScale.getValue() * 20);
         tpDetailInfo.setTabMaxWidth(horizontalScale.getValue() * 200);
+        //reset some custom font sizes
+        labelRpmCurrent.setStyle("-fx-font-size: " + verticalScale.getValue() * 35 + "px;");
+        labelRpmZero.setStyle("-fx-font-size: " + verticalScale.getValue() * 24 + "px;");
+        labelRpmMax.setStyle("-fx-font-size: " + verticalScale.getValue() * 24 + "px;");
+        labelShiftIndicator.setStyle("-fx-font-size: " + verticalScale.getValue() * 16 + "px;");
+        labelShiftIndicatorLeft.setStyle("-fx-font-size: " + verticalScale.getValue() * 16 + "px;");
+        labelShiftIndicatorRight.setStyle("-fx-font-size: " + verticalScale.getValue() * 16 + "px;");
+        labelVelocityTrueKph.setStyle("-fx-font-size: " + verticalScale.getValue() * 50 + "px;");
+        labelVelocityTrueKphLabel.setStyle("-fx-font-size: " + verticalScale.getValue() * 24 + "px;");
+        labelVelocityTrueMph.setStyle("-fx-font-size: " + verticalScale.getValue() * 24 + "px;");
+        labelVelocityTrueMphLabel.setStyle("-fx-font-size: " + verticalScale.getValue() * 24 + "px;");
+        labelCarGear.setStyle("-fx-font-size: " + verticalScale.getValue() * 72 + "px;");
+        labelCarGearLabel.setStyle("-fx-font-size: " + verticalScale.getValue() * 24 + "px;");
 
+        labelCarAccel1.setStyle("-fx-font-size: " + scaledFontSize + "px;");
+        labelCarBrake1.setStyle("-fx-font-size: " + scaledFontSize + "px;");
 
     }
 
@@ -882,7 +937,7 @@ public class ForzaGuiController {
         int seconds = (int) input % 60;
         int milliseconds = (int) (input * 1000) % 1000;
 
-        return StringFormatter.format("%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
+        return StringFormatter.format("% 2d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
     }
 
 

@@ -135,20 +135,24 @@ public class DataEngineer {
     public final DoubleProperty raceCurrentLap = new SimpleDoubleProperty();
     // ms?
     public final DoubleProperty raceCurrentRaceTime = new SimpleDoubleProperty();
-    public final IntegerProperty raceLapNumber = new SimpleIntegerProperty();
-    public final IntegerProperty racePosition = new SimpleIntegerProperty();
+    public final IntegerProperty raceLapNumber = new SimpleIntegerProperty(-1);
+    public final IntegerProperty racePosition = new SimpleIntegerProperty(24);
 
-    //button pressed or values?
+    // input values
     public final IntegerProperty carAccel = new SimpleIntegerProperty();
     public final IntegerProperty carBrake = new SimpleIntegerProperty();
     public final IntegerProperty carClutch = new SimpleIntegerProperty();
     public final IntegerProperty carHandBrake = new SimpleIntegerProperty();
-    //current gear or # gears?
+
+    // current gear
     public final IntegerProperty carGear = new SimpleIntegerProperty();
-    // what??
+
+    // steering input
     public final IntegerProperty carSteer = new SimpleIntegerProperty();
-    // what??
+
+    // normalized distance to driving line -127 to +127
     public final IntegerProperty raceNormalizedDrivingLine = new SimpleIntegerProperty();
+
     // what??
     public final IntegerProperty raceNormalizedAIBrakeDifference = new SimpleIntegerProperty();
 
@@ -157,8 +161,8 @@ public class DataEngineer {
     // this is reset to 0 each time your carOrdinal (=car) changes.
     public final DoubleProperty rpmMaxMeasured = new SimpleDoubleProperty();
 
-    public final StringProperty drivetrainTypeString= new SimpleStringProperty();
-    public final StringProperty carClassString= new SimpleStringProperty();
+    public final StringProperty drivetrainTypeString = new SimpleStringProperty();
+    public final StringProperty carClassString = new SimpleStringProperty();
 
     public final DoubleProperty velocityTrue = new SimpleDoubleProperty();
     public final DoubleProperty velocityTrueKph = new SimpleDoubleProperty();
@@ -190,8 +194,6 @@ public class DataEngineer {
 
     public final DoubleProperty surfaceRumbleMax = new SimpleDoubleProperty();
 
-
-
     // Tire normalized slip ratio, = 0 means 100% grip and |ratio| > 1.0 means loss of grip.
     public final DoubleProperty tireSlipRatioAbsoluteFL = new SimpleDoubleProperty();
     public final DoubleProperty tireSlipRatioAbsoluteFR = new SimpleDoubleProperty();
@@ -214,11 +216,21 @@ public class DataEngineer {
     public final IntegerProperty tireSlipAngleIndicatedRL = new SimpleIntegerProperty();
     public final IntegerProperty tireSlipAngleIndicatedRR = new SimpleIntegerProperty();
 
+    //helper for race timing
+    public final DoubleProperty previousLapTime = new SimpleDoubleProperty();
+    public final DoubleProperty lapStartRaceFuel = new SimpleDoubleProperty(1.0);
+    public final IntegerProperty previousLapNumber = new SimpleIntegerProperty();
+    public final IntegerProperty lapStartPosition = new SimpleIntegerProperty(24);
+    public final DoubleProperty previousLapFuel = new SimpleDoubleProperty(1.0);
+    public final IntegerProperty previousLapPositionChange = new SimpleIntegerProperty();
+    public final IntegerProperty lapCalculationHelper = new SimpleIntegerProperty(0);
+    public final DoubleProperty previousLapTimeDifference = new SimpleDoubleProperty(0.0);
 
 
 
     private DataEngineer() {
         isRaceOn.addListener((observable, oldValue, newValue) -> System.out.println("isRaceOn:" + newValue));
+
         carOrdinal.addListener((observable, oldValue, newValue) -> {
             this.rpmMaxMeasured.setValue(0);
             this.accelerationMaxMeasured.setValue(10);
@@ -226,78 +238,105 @@ public class DataEngineer {
 
         });
         shiftWarningThresholdLow.addListener((observable, oldValue, newValue) -> {
-            if (shiftWarningThresholdLow.getValue()>shiftWarningThresholdHigh.getValue()){
-                shiftWarningThresholdHigh.setValue(shiftWarningThresholdLow.getValue()+1);
+            if (shiftWarningThresholdLow.getValue() > shiftWarningThresholdHigh.getValue()) {
+                shiftWarningThresholdHigh.setValue(shiftWarningThresholdLow.getValue() + 1);
             }
         });
         surfaceRumbleFL.addListener((observable, oldValue, newValue) -> {
-            if (surfaceRumbleFL.getValue()>surfaceRumbleMax.getValue()){
+            if (surfaceRumbleFL.getValue() > surfaceRumbleMax.getValue()) {
                 surfaceRumbleMax.setValue(newValue);
             }
         });
         surfaceRumbleFR.addListener((observable, oldValue, newValue) -> {
-            if (surfaceRumbleFR.getValue()>surfaceRumbleMax.getValue()){
+            if (surfaceRumbleFR.getValue() > surfaceRumbleMax.getValue()) {
                 surfaceRumbleMax.setValue(newValue);
             }
         });
         surfaceRumbleRL.addListener((observable, oldValue, newValue) -> {
-            if (surfaceRumbleRL.getValue()>surfaceRumbleMax.getValue()){
+            if (surfaceRumbleRL.getValue() > surfaceRumbleMax.getValue()) {
                 surfaceRumbleMax.setValue(newValue);
             }
         });
         surfaceRumbleRR.addListener((observable, oldValue, newValue) -> {
-            if (surfaceRumbleRR.getValue()>surfaceRumbleMax.getValue()){
+            if (surfaceRumbleRR.getValue() > surfaceRumbleMax.getValue()) {
                 surfaceRumbleMax.setValue(newValue);
             }
         });
         tireSlipRatioNormalizedFL.addListener((observable -> {
-            if (Math.abs(tireSlipRatioNormalizedFL.getValue())>=1.0){
+            if (Math.abs(tireSlipRatioNormalizedFL.getValue()) >= 1.0) {
                 tireSlipRatioIndicatedFL.setValue(1);
             } else tireSlipRatioIndicatedFL.setValue(0);
             tireSlipRatioAbsoluteFL.setValue(Math.abs(tireSlipRatioNormalizedFL.getValue()));
         }));
         tireSlipRatioNormalizedFR.addListener((observable -> {
-            if (Math.abs(tireSlipRatioNormalizedFR.getValue())>=1.0){
+            if (Math.abs(tireSlipRatioNormalizedFR.getValue()) >= 1.0) {
                 tireSlipRatioIndicatedFR.setValue(1);
             } else tireSlipRatioIndicatedFR.setValue(0);
             tireSlipRatioAbsoluteFR.setValue(Math.abs(tireSlipRatioNormalizedFR.getValue()));
         }));
         tireSlipRatioNormalizedRL.addListener((observable -> {
-            if (Math.abs(tireSlipRatioNormalizedRL.getValue())>=1.0){
+            if (Math.abs(tireSlipRatioNormalizedRL.getValue()) >= 1.0) {
                 tireSlipRatioIndicatedRL.setValue(1);
             } else tireSlipRatioIndicatedRL.setValue(0);
             tireSlipRatioAbsoluteRL.setValue(Math.abs(tireSlipRatioNormalizedRL.getValue()));
         }));
         tireSlipRatioNormalizedRR.addListener((observable -> {
-            if (Math.abs(tireSlipRatioNormalizedRR.getValue())>=1.0){
+            if (Math.abs(tireSlipRatioNormalizedRR.getValue()) >= 1.0) {
                 tireSlipRatioIndicatedRR.setValue(1);
             } else tireSlipRatioIndicatedRR.setValue(0);
             tireSlipRatioAbsoluteRR.setValue(Math.abs(tireSlipRatioNormalizedRR.getValue()));
         }));
         tireSlipAngleNormalizedFL.addListener((observable -> {
-            if (Math.abs(tireSlipAngleNormalizedFL.getValue())>=1.0){
+            if (Math.abs(tireSlipAngleNormalizedFL.getValue()) >= 1.0) {
                 tireSlipAngleIndicatedFL.setValue(1);
             } else tireSlipAngleIndicatedFL.setValue(0);
             tireSlipAngleAbsoluteFL.setValue(Math.abs(tireSlipAngleNormalizedFL.getValue()));
         }));
         tireSlipAngleNormalizedRL.addListener((observable -> {
-            if (Math.abs(tireSlipAngleNormalizedRL.getValue())>=1.0){
+            if (Math.abs(tireSlipAngleNormalizedRL.getValue()) >= 1.0) {
                 tireSlipAngleIndicatedRL.setValue(1);
             } else tireSlipAngleIndicatedRL.setValue(0);
             tireSlipAngleAbsoluteRL.setValue(Math.abs(tireSlipAngleNormalizedRL.getValue()));
         }));
         tireSlipAngleNormalizedFR.addListener((observable -> {
-            if (Math.abs(tireSlipAngleNormalizedFR.getValue())>=1.0){
+            if (Math.abs(tireSlipAngleNormalizedFR.getValue()) >= 1.0) {
                 tireSlipAngleIndicatedFR.setValue(1);
             } else tireSlipAngleIndicatedFR.setValue(0);
             tireSlipAngleAbsoluteFR.setValue(Math.abs(tireSlipAngleNormalizedFR.getValue()));
         }));
         tireSlipAngleNormalizedRR.addListener((observable -> {
-            if (Math.abs(tireSlipAngleNormalizedRR.getValue())>=1.0){
+            if (Math.abs(tireSlipAngleNormalizedRR.getValue()) >= 1.0) {
                 tireSlipAngleIndicatedRR.setValue(1);
             } else tireSlipAngleIndicatedRR.setValue(0);
             tireSlipAngleAbsoluteRR.setValue(Math.abs(tireSlipAngleNormalizedRR.getValue()));
         }));
+        raceLapNumber.addListener((observable, oldValue, newValue) -> {
+            if (isRaceOn.getValue()==1){
+                if (newValue.intValue()==0){
+                //reset
+                    System.out.println("New Race Detected. Resetting Laptimes");
+                    previousLapNumber.setValue(0);
+                    previousLapTime.setValue(0.0);
+                    previousLapTimeDifference.setValue(0.0);
+                    lapStartRaceFuel.setValue(1.0);
+                    previousLapFuel.setValue(0.0);
+                    lapStartPosition.setValue(racePosition.getValue());
+                    previousLapPositionChange.setValue(0);
+                    lapCalculationHelper.setValue(0);
+                    System.out.println("Done");
+                } else{
+                    previousLapNumber.setValue((int) oldValue + 1);
+                    previousLapTimeDifference.setValue(raceLastLap.getValue()-previousLapTime.getValue());
+                    previousLapTime.setValue(raceLastLap.getValue());
+                    previousLapFuel.setValue(lapStartRaceFuel.getValue()-raceFuel.getValue());
+                    lapStartRaceFuel.setValue(raceFuel.getValue());
+                    previousLapPositionChange.setValue(racePosition.getValue()-lapStartPosition.getValue());
+                    lapStartPosition.setValue(racePosition.getValue());
+
+                    lapCalculationHelper.setValue(lapCalculationHelper.getValue()+1);
+                }
+            }
+        });
 
 
     }

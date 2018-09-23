@@ -38,8 +38,27 @@
 
 .tab-pane .tab:selected
 {
-	-fx-color: #555555;
+    -fx-text-fill: #FFFFFF;
 	-fx-background-color: #000000;
+}
+.list-view
+{
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #000000;
+}
+.list-view .scroll-bar {
+    -fx-background-color: transparent;
+    -fx-border-color: #101010;
+}
+.list-view .scroll-bar .thumb {
+    -fx-background-color: #101010;
+    -fx-border-color: #101010;
+}
+
+.list-cell
+{
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #000000;
 }
 
 

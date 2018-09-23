@@ -21,6 +21,118 @@
                     <children>
                         <TabPane fx:id="tpDetailInfo" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="20.0" tabMaxWidth="200.0" VBox.vgrow="ALWAYS">
                             <tabs>
+                                <Tab closable="false" text="Race Information">
+                           <content>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <VBox layoutX="530.0" layoutY="10.0">
+                                       <children>
+                                          <Label text="Race &amp; Car Information" underline="true" />
+                                          <HBox>
+                                             <children>
+                                                <Label text="Current Lap: " />
+                                                <Label fx:id="labelRaceLapNumber" layoutX="10.0" layoutY="10.0" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox layoutX="10.0" layoutY="27.0">
+                                             <children>
+                                                <Label text="Current Position: " />
+                                                <Label fx:id="labelRacePosition" layoutX="10.0" layoutY="10.0" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <Label text="Race Distance: " />
+                                                <Label fx:id="labelRaceDistanceTravelled" layoutX="10.0" layoutY="10.0" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox layoutX="10.0" layoutY="163.0">
+                                             <children>
+                                                <Label text="Race Time: " />
+                                                <Label fx:id="labelRaceCurrentRaceTime" text="0:00:00.000" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <Label text="Car: " />
+                                                <Label fx:id="labelCarDescription" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <Label text="Class | Index: " />
+                                                <Label fx:id="labelCarClass" text="Label" />
+                                                <Label layoutX="10.0" layoutY="10.0" text=" | " />
+                                                <Label fx:id="labelCarPerformanceIndex" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <Label text="Max. RPM reached: " />
+                                                <Label fx:id="labelRpmMaxMeasured" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <Label text="Power: " />
+                                                <Label fx:id="labelCarPower1" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <Label text="Torque: " />
+                                                <Label fx:id="labelCarTorque1" text="Label" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <Label text="Boost: " />
+                                                <Label fx:id="labelCarBoost1" text="Label" />
+                                             </children>
+                                          </HBox>
+
+                                       </children>
+                                    </VBox>
+                                    <VBox minWidth="10.0" HBox.hgrow="ALWAYS" />
+                                    <GridPane>
+                                      <columnConstraints>
+                                        <ColumnConstraints minWidth="70.0" />
+                                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="150.0" />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="70.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="20.0" />
+                                        <RowConstraints minHeight="20.0" />
+                                        <RowConstraints minHeight="20.0" />
+                                          <RowConstraints minHeight="20.0" />
+                                          <RowConstraints minHeight="20.0" vgrow="ALWAYS" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="Lap Times" underline="true" GridPane.columnSpan="2" />
+                                          <Label text="Current Lap:" GridPane.rowIndex="1" />
+                                          <Label layoutX="10.0" layoutY="84.0" text="Last Lap:" GridPane.rowIndex="2" />
+                                          <Label layoutX="10.0" layoutY="147.0" text="Fastest Lap: " GridPane.rowIndex="3" />
+                                          <Label fx:id="labelRaceCurrentLap" layoutX="10.0" layoutY="53.0" text="0:00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label fx:id="labelRaceLastLap" layoutX="170.0" layoutY="53.0" text="0:00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label fx:id="labelRaceBestLap" layoutX="170.0" layoutY="116.0" text="0:00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <ListView fx:id="listRaceTimes" minHeight="100.0" minWidth="270.0" GridPane.columnSpan="2147483647" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="4" />
+                                          <Label fx:id="labelRaceFuelCurrentLap" layoutX="220.0" layoutY="32.0" text="0.0%" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                    <VBox minWidth="10.0" HBox.hgrow="ALWAYS" />
+                                    <VBox alignment="CENTER">
+                                       <children>
+                                          <Label alignment="CENTER" text="Fuel" underline="true" />
+                                          <StackPane VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <ProgressBar fx:id="progressRaceFuel" minHeight="60.0" minWidth="150.0" progress="0.36" rotate="-90.0" />
+                                                <Label fx:id="labelRaceFuel" text="Label" />
+                                             </children></StackPane>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </content></Tab>
                                 <Tab closable="false" text="Wheels &amp; Tires">
                                     <content>
                                         <GridPane hgap="2.0" vgap="2.0">
@@ -528,238 +640,96 @@
                                         </HBox>
                                     </content>
                                 </Tab>
-                                <Tab closable="false" text="Race Information">
+                        <Tab text="Controller Input">
                            <content>
-                              <HBox alignment="CENTER">
+                              <VBox>
                                  <children>
-                                    <VBox layoutX="530.0" layoutY="10.0">
+                                    <Label text="Race &amp; Input Info" underline="true" />
+                                    <HBox layoutX="10.0" layoutY="44.0">
                                        <children>
-                                          <Label text="Race &amp; Input Info" underline="true" />
-                                          <HBox>
+                                          <Label text="Driving Line (0=on): " />
+                                          <StackPane>
                                              <children>
-                                                <Label text="Lap No.: " />
-                                                <Label fx:id="labelRaceLapNumber" layoutX="10.0" layoutY="10.0" text="Label" />
+                                                <ProgressBar fx:id="progressRaceNormalizedDrivingLine" minHeight="20.0" minWidth="70.0" progress="0.0" />
+                                                <Label fx:id="labelRaceNormalizedDrivingLine" text="Label" />
                                              </children>
-                                          </HBox>
-                                          <HBox>
-                                             <children>
-                                                <Label text="Distance Travelled: " />
-                                                <Label fx:id="labelRaceDistanceTravelled" layoutX="10.0" layoutY="10.0" text="Label" />
-                                             </children>
-                                          </HBox>
-                                          <HBox layoutX="10.0" layoutY="27.0">
-                                             <children>
-                                                <Label text="Current Position: " />
-                                                <Label fx:id="labelRacePosition" layoutX="10.0" layoutY="10.0" text="Label" />
-                                             </children>
-                                          </HBox>
-                                          <HBox layoutX="10.0" layoutY="44.0">
-                                             <children>
-                                                <Label text="Driving Line (0=on): " />
-                                                <StackPane>
-                                                   <children>
-                                                      <ProgressBar fx:id="progressRaceNormalizedDrivingLine" minHeight="20.0" minWidth="70.0" progress="0.0" />
-                                                      <Label fx:id="labelRaceNormalizedDrivingLine" text="Label" />
-                                                   </children>
-                                                </StackPane>
-                                             </children>
-                                          </HBox>
-                                           <HBox layoutX="10.0" layoutY="44.0">
-                                               <children>
-                                                   <Label text="AI Brake Difference: " />
-                                                   <StackPane>
-                                                       <children>
-                                                           <ProgressBar fx:id="progressRaceNormalizedAIBrakeDifference" minHeight="20.0" minWidth="70.0" progress="0.0" />
-                                                           <Label fx:id="labelRaceNormalizedAIBrakeDifference" text="Label" />
-                                                       </children>
-                                                   </StackPane>
-                                               </children>
-                                           </HBox>
-                                           <HBox layoutX="10.0" layoutY="44.0">
-                                               <children>
-                                                   <Label text="Acceleration Input: " />
-                                                   <StackPane>
-                                                       <children>
-                                                           <ProgressBar fx:id="progressCarAccel" minHeight="20.0" minWidth="70.0" progress="0.0" />
-                                                           <Label fx:id="labelCarAccel" text="Label" />
-                                                       </children>
-                                                   </StackPane>
-                                               </children>
-                                           </HBox>
-                                           <HBox layoutX="10.0" layoutY="44.0">
-                                               <children>
-                                                   <Label text="Brake Input: " />
-                                                   <StackPane>
-                                                       <children>
-                                                           <ProgressBar fx:id="progressCarBrake" minHeight="20.0" minWidth="70.0" progress="0.0" />
-                                                           <Label fx:id="labelCarBrake" text="Label" />
-                                                       </children>
-                                                   </StackPane>
-                                               </children>
-                                           </HBox>
-                                           <HBox layoutX="10.0" layoutY="44.0">
-                                               <children>
-                                                   <Label text="Clutch: " />
-                                                   <StackPane>
-                                                       <children>
-                                                           <ProgressBar fx:id="progressCarClutch" minHeight="20.0" minWidth="70.0" progress="0.0" />
-                                                           <Label fx:id="labelCarClutch" text="Label" />
-                                                       </children>
-                                                   </StackPane>
-                                               </children>
-                                           </HBox>
-                                           <HBox layoutX="10.0" layoutY="44.0">
-                                               <children>
-                                                   <Label text="Handbrake: " />
-                                                   <StackPane>
-                                                       <children>
-                                                           <ProgressBar fx:id="progressCarHandbrake" minHeight="20.0" minWidth="70.0" progress="0.0" />
-                                                           <Label fx:id="labelCarHandbrake" text="Label" />
-                                                       </children>
-                                                   </StackPane>
-                                               </children>
-                                           </HBox>
-                                           <HBox layoutX="10.0" layoutY="44.0">
-                                               <children>
-                                                   <Label text="Steering Input: " />
-                                                   <StackPane>
-                                                       <children>
-                                                           <ProgressBar fx:id="progressCarSteer" minHeight="20.0" minWidth="70.0" progress="0.0" />
-                                                           <Label fx:id="labelCarSteer" text="Label" />
-                                                       </children>
-                                                   </StackPane>
-                                               </children>
-                                           </HBox>
-
+                                          </StackPane>
                                        </children>
-                                    </VBox>
-                                    <VBox layoutX="596.0" layoutY="10.0" minWidth="10.0" HBox.hgrow="ALWAYS" />
-                                    <GridPane>
-                                      <columnConstraints>
-                                        <ColumnConstraints minWidth="70.0" />
-                                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="150.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                        <RowConstraints minHeight="20.0" />
-                                        <RowConstraints minHeight="20.0" />
-                                        <RowConstraints minHeight="20.0" />
-                                          <RowConstraints minHeight="20.0" />
-                                          <RowConstraints minHeight="20.0" />
-                                      </rowConstraints>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="44.0">
                                        <children>
-                                          <Label text="Timing" underline="true" GridPane.columnSpan="2" />
-                                          <Label text="Current Lap:" GridPane.rowIndex="1" />
-                                          <Label layoutX="10.0" layoutY="84.0" text="Last Lap:" GridPane.rowIndex="2" />
-                                          <Label layoutX="10.0" layoutY="147.0" text="Fastest Lap: " GridPane.rowIndex="3" />
-                                          <Label layoutX="10.0" layoutY="179.0" text="Race Time:" GridPane.rowIndex="4" />
-                                          <Label fx:id="labelRaceCurrentLap" layoutX="10.0" layoutY="53.0" text="2:00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <Label fx:id="labelRaceLastLap" layoutX="170.0" layoutY="53.0" text="2:00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <Label fx:id="labelRaceBestLap" layoutX="170.0" layoutY="116.0" text="2:00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                          <Label fx:id="labelRaceCurrentRaceTime" layoutX="170.0" layoutY="179.0" text="2:00:00.000" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                       </children>
-                                    </GridPane>
-                                    <VBox minWidth="10.0" HBox.hgrow="ALWAYS" />
-                                    <VBox>
-                                       <children>
-                                          <VBox VBox.vgrow="ALWAYS">
+                                          <Label text="AI Brake Difference: " />
+                                          <StackPane>
                                              <children>
-                                                <Label text="Fuel" underline="true" />
-                                                <StackPane VBox.vgrow="ALWAYS">
-                                                   <children>
-                                                      <ProgressBar fx:id="progressRaceFuel" minHeight="60.0" minWidth="150.0" progress="0.36" rotate="-90.0" />
-                                                      <Label fx:id="labelRaceFuel" text="Label" />
-                                                   </children>
-                                                </StackPane>
+                                                <ProgressBar fx:id="progressRaceNormalizedAIBrakeDifference" minHeight="20.0" minWidth="70.0" progress="0.0" />
+                                                <Label fx:id="labelRaceNormalizedAIBrakeDifference" text="Label" />
                                              </children>
-                                          </VBox>
+                                          </StackPane>
                                        </children>
-                                    </VBox>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="44.0">
+                                       <children>
+                                          <Label text="Acceleration Input: " />
+                                          <StackPane>
+                                             <children>
+                                                <ProgressBar fx:id="progressCarAccel" minHeight="20.0" minWidth="70.0" progress="0.0" />
+                                                <Label fx:id="labelCarAccel" text="Label" />
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="44.0">
+                                       <children>
+                                          <Label text="Brake Input: " />
+                                          <StackPane>
+                                             <children>
+                                                <ProgressBar fx:id="progressCarBrake" minHeight="20.0" minWidth="70.0" progress="0.0" />
+                                                <Label fx:id="labelCarBrake" text="Label" />
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="44.0">
+                                       <children>
+                                          <Label text="Clutch: " />
+                                          <StackPane>
+                                             <children>
+                                                <ProgressBar fx:id="progressCarClutch" minHeight="20.0" minWidth="70.0" progress="0.0" />
+                                                <Label fx:id="labelCarClutch" text="Label" />
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="44.0">
+                                       <children>
+                                          <Label text="Handbrake: " />
+                                          <StackPane>
+                                             <children>
+                                                <ProgressBar fx:id="progressCarHandbrake" minHeight="20.0" minWidth="70.0" progress="0.0" />
+                                                <Label fx:id="labelCarHandbrake" text="Label" />
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </HBox>
+                                    <HBox layoutX="10.0" layoutY="44.0">
+                                       <children>
+                                          <Label text="Steering Input: " />
+                                          <StackPane>
+                                             <children>
+                                                <ProgressBar fx:id="progressCarSteer" minHeight="20.0" minWidth="70.0" progress="0.0" />
+                                                <Label fx:id="labelCarSteer" text="Label" />
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </HBox>
                                  </children>
-                              </HBox>
-                           </content></Tab>
-                                <Tab closable="false" text="General Information &amp; Car Settings">
+                              </VBox>
+                           </content>
+                        </Tab>
+                                <Tab closable="false" text="Information &amp; Settings">
                                     <content>
                                         <HBox spacing="5.0">
                                             <children>
-                                                <VBox spacing="1.0" HBox.hgrow="SOMETIMES">
-                                                    <children>
-                                                        <Label text="Car Information" underline="true" />
-                                                        <HBox layoutX="10.0" layoutY="27.0">
-                                                            <children>
-                                                                <Label text="Car Description: " />
-                                                                <Label fx:id="labelCarDescription" text="Label" />
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox>
-                                                            <children>
-                                                                <Label text="Car Ordinal: " />
-                                                                <Label fx:id="labelCarOrdinal" text="Label" />
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox>
-                                                            <children>
-                                                                <Label text="Car Class: " />
-                                                                <Label fx:id="labelCarClass" text="Label" />
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox>
-                                                            <children>
-                                                                <Label text="Performance Index: " />
-                                                                <Label fx:id="labelCarPerformanceIndex" text="Label" />
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox>
-                                                            <children>
-                                                                <Label text="Drivetrain Type: " />
-                                                                <Label fx:id="labelDrivetrainType" text="Label" />
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox layoutX="10.0" layoutY="61.0">
-                                                            <children>
-                                                                <Label text="Cylinders: " />
-                                                                <Label fx:id="labelNumOfCylinders" text="Label" />
-                                                            </children>
-                                                        </HBox>
-                                                        <HBox>
-                                                            <children>
-                                                                <Label text="Max. RPM reached: " />
-                                                                <Label fx:id="labelRpmMaxMeasured" text="Label" />
-                                                                <Label text="   " />
-                                                                <Button fx:id="buttonRpmMaxMeasuredReset" mnemonicParsing="false" text="Reset" />
-                                                            </children>
-                                                        </HBox>
-                                                    </children>
-                                                </VBox>
-                                                <HBox HBox.hgrow="SOMETIMES">
-                                                    <children>
-                                                        <VBox spacing="1.0">
-                                                            <children>
-                                                                <Label text="Car Settings" underline="true" />
-                                                                <Label text="Low Threshold %" />
-                                                                <HBox>
-                                                                    <children>
-                                                                        <Slider fx:id="sliderShiftIndicatorThresholdLow" max="90.0" minWidth="120.0" value="95.0" />
-                                                                        <Label fx:id="labelShiftIndicatorThresholdLow" text="Label" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <Label layoutX="10.0" layoutY="27.0" text="High Threshold %" />
-                                                                <HBox>
-                                                                    <children>
-                                                                        <Slider fx:id="sliderShiftIndicatorThresholdHigh" min="91.0" minWidth="120.0" value="99.0" />
-                                                                        <Label fx:id="labelShiftIndicatorThresholdHigh" text="Label" />
-                                                                    </children>
-                                                                </HBox>
-                                                                <VBox>
-                                                                    <children>
-                                                                        <Label text="Car Description: " />
-                                                                        <TextField fx:id="textCarDescription" VBox.vgrow="ALWAYS" />
-                                                                        <Button fx:id="buttonSetCarDescription" mnemonicParsing="false" text="Manual Save" />
-                                                                    </children>
-                                                                </VBox>
-                                                            </children>
-                                                        </VBox>
-                                                    </children>
-                                                </HBox>
                                                 <VBox spacing="1.0" HBox.hgrow="SOMETIMES">
                                                     <children>
                                                         <Label text="Application Settings" underline="true" />
@@ -791,15 +761,66 @@
 
                                                             </children>
                                                         </HBox>
-                                                    </children>
-                                                </VBox>
-                                                <VBox HBox.hgrow="SOMETIMES">
-                                                    <children>
-                                                        <Label text="DataOut Information" underline="true" />
+                                                        <Label text="   " underline="true" />
+                                          <Label layoutX="10.0" layoutY="108.0" text="DataOut Information" underline="true" />
                                                         <HBox>
                                                             <children>
                                                                 <Label text="Timestamp: " />
                                                                 <Label fx:id="labelTimestamp" text="Label" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <HBox HBox.hgrow="SOMETIMES">
+                                                    <children>
+                                                        <VBox spacing="1.0">
+                                                            <children>
+                                                                <Label text="Car Settings" underline="true" />
+                                                                <Label text="Low Threshold %" />
+                                                                <HBox>
+                                                                    <children>
+                                                                        <Slider fx:id="sliderShiftIndicatorThresholdLow" max="90.0" minWidth="120.0" value="95.0" />
+                                                                        <Label fx:id="labelShiftIndicatorThresholdLow" text="Label" />
+                                                                    </children>
+                                                                </HBox>
+                                                                <Label layoutX="10.0" layoutY="27.0" text="High Threshold %" />
+                                                                <HBox>
+                                                                    <children>
+                                                                        <Slider fx:id="sliderShiftIndicatorThresholdHigh" min="91.0" minWidth="120.0" value="99.0" />
+                                                                        <Label fx:id="labelShiftIndicatorThresholdHigh" text="Label" />
+                                                                    </children>
+                                                                </HBox>
+                                                                <VBox>
+                                                                    <children>
+                                                                        <Label text="Car Description: " />
+                                                                        <TextField fx:id="textCarDescription" VBox.vgrow="ALWAYS" />
+                                                                        <Button fx:id="buttonSetCarDescription" mnemonicParsing="false" text="Manual Save" />
+                                                                    </children>
+                                                                </VBox>
+                                                                <Button fx:id="buttonRpmMaxMeasuredReset" mnemonicParsing="false" text="Reset Max. RPM reached" />
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </HBox>
+                                                <VBox spacing="1.0" HBox.hgrow="SOMETIMES">
+                                                    <children>
+                                                        <Label text="Car Information" underline="true" />
+                                                        <HBox>
+                                                            <children>
+                                                                <Label text="Car Ordinal: " />
+                                                                <Label fx:id="labelCarOrdinal" text="Label" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox>
+                                                            <children>
+                                                                <Label text="Drivetrain Type: " />
+                                                                <Label fx:id="labelDrivetrainType" text="Label" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox layoutX="10.0" layoutY="61.0">
+                                                            <children>
+                                                                <Label text="Cylinders: " />
+                                                                <Label fx:id="labelNumOfCylinders" text="Label" />
                                                             </children>
                                                         </HBox>
                                                     </children>
@@ -815,6 +836,18 @@
                         </TabPane>
                         <HBox alignment="BOTTOM_RIGHT" spacing="1.0">
                             <children>
+                        <StackPane alignment="CENTER_LEFT">
+                           <children>
+                              <ProgressBar fx:id="progressCarBrake1" minHeight="25.0" minWidth="150.0" nodeOrientation="RIGHT_TO_LEFT" progress="0.36" />
+                              <Label fx:id="labelCarBrake1" text="Label" />
+                           </children>
+                        </StackPane>
+                        <StackPane alignment="CENTER_RIGHT">
+                           <children>
+                              <ProgressBar fx:id="progressCarAccel1" minHeight="25.0" minWidth="150.0" progress="0.36" />
+                              <Label fx:id="labelCarAccel1" text="Label" />
+                           </children>
+                        </StackPane>
                                 <Button fx:id="buttonClose" mnemonicParsing="false" text="Exit" />
                                 <Pane prefWidth="30.0" />
                                 <Button fx:id="buttonResize" mnemonicParsing="false" text="Maximize Window" />
@@ -836,7 +869,7 @@
                                 <Label fx:id="labelShiftIndicatorLeft" alignment="TOP_CENTER" contentDisplay="CENTER" text="Shift Indicator" />
                                 <StackPane fx:id="stackpaneShiftWarning">
                                     <children>
-                                        <ProgressBar fx:id="progressShiftWarning" prefHeight="30.0" prefWidth="700.0" progress="0.48" />
+                                        <ProgressBar fx:id="progressShiftWarning" minHeight="30.0" minWidth="700.0" progress="0.48" />
                                         <Label fx:id="labelShiftIndicator" alignment="TOP_CENTER" contentDisplay="CENTER" text="Shift Indicator" />
                                     </children>
                                 </StackPane>
@@ -863,7 +896,7 @@
                                 </Label>
                                 <StackPane fx:id="stackpaneRpm" alignment="TOP_CENTER" centerShape="false">
                                     <children>
-                                        <ProgressBar fx:id="progressRpmCurrent" prefHeight="50.0" prefWidth="450.0" progress="0.36" StackPane.alignment="CENTER">
+                                        <ProgressBar fx:id="progressRpmCurrent" minHeight="50.0" minWidth="450.0" progress="0.36" StackPane.alignment="CENTER">
                                             <StackPane.margin>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </StackPane.margin>
