@@ -26,3 +26,11 @@ Maximizing, Resizing, dragging without the windows bar on top cluttering the inf
 
 Update:
 recently added laptime display (still a little buggy) to show each laptime as well as delta to the lap before and fuel consumption
+
+How to use this:
+- You need any Java Runtime Environment (JRE) for example from here: https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html
+- After installing JRE, go to "releases" https://github.com/Weitwalter/ForzaDashboard/releases. 
+- You need to download the ForzaConfig.properties and ForzaCarSettings.properties files as well as the ForzaDashboard.jar file.
+- Put the downloaded files into one folder (which one does not matter)
+- Run the ForzaDasboard .jar executable (remember: the ListeningPort is set in the ForzaConfig.properties (Default: 1337)
+- You don't need the source code if you don't want to develop.
